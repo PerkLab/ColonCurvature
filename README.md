@@ -31,9 +31,27 @@ To start, you have a project folder.
 Inside are several folders, each titled with an 8 digit patient ID such as PTAK0070.
 Inside the patient folder PTAK0070 is between one, two, and three files.
 There files are the segmentaions of the patients colon in suppine, prone, and or left down positions. 
+There files are named as patID_ProSeg.seg.nrrd, for example PTAK0070_SupSeg.seg.nrrd.
+In each segmentation, there is a segment labeled 'colon' and one labeled 'notColon'. 
 
+Once you are set up, edit AllAnalysis.py in a text editor like Notepad++.
+Inside you will find functions to:
+-Get centerpoints of a colon seg from file,
+-Fit a curve to markups 
+-Get an output file containing a curve fit to a fiducial file
+-Get a textfile with curvatures at every point for a curve file
 
+You will also find commented code blocks which automate the processes of curve fitting 
+and getting curvature at points for multipe patients. 
 
+The last function in the file, analyzePatient(patientPath, modeList = ['sup', 'pro'])
+is a function which takes the path to the patient file described above,
+and a list containing the types of scans you are working with. Use 'sup' for supine, 'pro' for prone,
+and 'ld' for left down. 
+
+Once you have filled in the patient directory and the types of segmentations you want to process into
+the analyzePatient function call at the bottom, save the file, and run the file in a slicer instance. 
+You can run the file in a slicer instance with: execfile("scriptPath")
  
 
 
