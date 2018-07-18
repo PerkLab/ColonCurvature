@@ -326,7 +326,7 @@ def analyzePatient(patientPath, modeList = ['sup', 'pro']):
 	
 
 #do it
-analyzePatient("C:\Users\jaker\Documents\ColonCurves_JL\CtVolumes\PTBC0017", ['pro'])
+analyzePatient("C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTAP0049", ['pro'])
 
 
 
