@@ -60,16 +60,38 @@ def combinePatientDataFiles(patPath):
 	
 	
 	
-	
-idList = ['PTAF0056', 'PTAJ0023', 'PTAJ0095', 'PTAM0029', 'PTAP0049', 'PTAT0093', 'PTBB0002', 'PTBB0024', 'PTBC0016', 'PTBC0017', 'PTBD0033', 'PTBG0026', 'TEST0012']
-directory = r'C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\\' 
-
-for id in idList:
-	patPath = directory + id
-	combinePatientDataFiles(patPath)
-	
-#combinePatientDataFiles(r'C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012')
+#The following 5 lines of code will create a combined data file for each patient with all their scans. 
+#idList = ['PTAF0056', 'PTAJ0023', 'PTAJ0095', 'PTAM0029', 'PTAP0049', 'PTAT0093', 'PTBB0002', 'PTBB0024', 'PTBC0016', 'PTBC0017', 'PTBD0033', 'PTBG0026', 'TEST0012']
+#directory = r'C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\\' 
+#for id in idList:
+	#patPath = directory + id
+	#combinePatientDataFiles(patPath)
 		
+		
+
+patList = [r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTAT0093",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBB0002",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBB0024",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBC0016",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBC0017",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBD0033",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBG0026",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTAF0056",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTAJ0023",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTAJ0095",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTAM0029",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTAP0049"]
+
+supFilesList = [x + '\\' + x[-8:] + '_SupCurvaturesData.txt' for x in patList]
+proFilesList = [x + '\\' + x[-8:] + '_ProCurvaturesData.txt' for x in patList]
+leftDownFilesList = [x + '\\' + x[-8:] + '_LeftDownCurvaturesData.txt' for x in patList]
+outFilePath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\AllData.txt"
+
+allFilesList = supFilesList + proFilesList + leftDownFilesList
+#print(allFilesList)
+combineDataFiles(allFilesList, outFilePath)
+
 		
 		
 
