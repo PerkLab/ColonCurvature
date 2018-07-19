@@ -58,6 +58,26 @@ def combinePatientDataFiles(patPath):
 	
 	combineDataFiles([supPath, proPath, leftDownPath], outPath)
 	
+def addDetailsStackMany(inFileList, outFilePath):
+	outFile = open(outFilePath, 'w')
+	for x in inFileList:
+		detailedData = []
+		try:
+			inFile = open(x, 'r')
+			data = [x.strip() + '\n' for x in inFile.readlines()]
+			#name = x[-26:] + "\n"
+			for count, item in enumerate(data):
+				if item != '' and item !="\n":
+					detailedDatum = '{}, {}, {}'.format(count, count/(len(data)-2)*100, item)
+					detailedData.append(detailedDatum)
+			inFile.close()
+			for x in detailedData:
+				outFile.write(x)
+		except:
+			7*2
+			pass
+	outFile.close()
+	
 	
 	
 #The following 5 lines of code will create a combined data file for each patient with all their scans. 
@@ -89,10 +109,15 @@ leftDownFilesList = [x + '\\' + x[-8:] + '_LeftDownCurvaturesData.txt' for x in 
 outFilePath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\AllData.txt"
 
 allFilesList = supFilesList + proFilesList + leftDownFilesList
-#print(allFilesList)
-combineDataFiles(allFilesList, outFilePath)
 
-		
+#print(allFilesList)
+#combineDataFiles(allFilesList, outFilePath)
+
+
+supFilesList = [x + '\\' + x[-8:] + '_SupCurvatures.txt' for x in patList]
+proFilesList = [x + '\\' + x[-8:] + '_ProCurvatures.txt' for x in patList]
+leftDownFilesList = [x + '\\' + x[-8:] + '_LeftDownCurvatures.txt' for x in patList]
+addDetailsStackMany(supFilesList, r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\AllSupDataStacked.txt")
 		
 
 #The following 6 lines create more detailed data files for all the patients:
