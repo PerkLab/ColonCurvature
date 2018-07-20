@@ -1,3 +1,7 @@
+import statistics as stat
+
+
+
 def addDetails(inPath, outputPath):
 	'''A function that takes the path of a text file and creates a new text file with the point number,
 	and the percentage of how far the point is along the list. Easy to import to Excel'''
@@ -89,14 +93,38 @@ def getSumCurvatures(curvaturesList, width):
 		sumList.append(sum(subList))
 	return sumList
 
-def findLocalMaximas(inList):
+def findLocalMaximas(inList, minDist = 11):
 	'''A function to return a list of the local maximas of an input list. '''
+	avgCurvature = stat.mean(inList)
 	localMaximas = []
 	for x in range(1, len(inList)-1):
 		currentThreeList = inList[x-1:x+2]
-		if currentThreeList[0]<currentThreeList[1] and currentThreeList[1] > currentThreeList[2]:
+		if currentThreeList[0]<currentThreeList[1] and currentThreeList[1] > currentThreeList[2] and currentThreeList[1]> avgCurvature:
 			localMaximas.append((x+1, currentThreeList[1]))
-	return localMaximas
+	#reprocess localMaximas:
+	'''reprocessing will iterate through the list and find clusters of max points,
+	where there is achain of points with less than minDist between them, and this procedss replaces this
+	chain with a single point, in the middle of where the chain was. '''
+	newLocalMaximas = []
+	closePointsList = []
+	addedOne = False
+	for x, i in enumerate(localMaximas[:-1]):
+		if not addedOne:
+			if len(closePointsList)==0:
+				pass
+			elif len(closePointsList)<2:
+				newLocalMaximas.append(closePointsList[0])
+				closePointsList = []
+			elif len(closePointsList)>1:
+				newLocalMaximas.append(closePointsList[len(closePointsList)//2])
+				closePointsList = []
+		addedOne = False
+		if closePointsList == []:
+			closePointsList = [i]
+		if localMaximas[x+1][0] - i[0]< minDist:
+			closePointsList.append(localMaximas[x+1])
+			addedOne = True
+	return newLocalMaximas
 
 def addSumCurvaturesToDataFile(inPath, width = 10):
 	'''A fucntion to modify a detailed data file with curvatures, by adding a column 
