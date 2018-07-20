@@ -112,13 +112,45 @@ def addSumCurvaturesToDataFile(inPath, width = 10):
 		fOut.write(line + '\n')
 	fOut.close()
 	
+def addSumCurvatureMaximumsToDataFile(inPath):
+	fIn = open(inPath, 'r')
+	lines = fIn.readlines()
+	fIn.close()
+	title = lines[0].strip()
+	sumCurvatureValues = [x.strip().split(', ')[3] for x in lines[1:]]
+	sumCurvatureValues = [float(y) for y in sumCurvatureValues]
+	locMaximas = findLocalMaximas(sumCurvatureValues)
+	#xVals = [x.strip().split(', ')[0] for x in lines[1:]]
+	#xVals = [int(x) for x in xVals]
+	locMaximasColumn = []
+	for x in range(1, len(lines)):
+		t = (x, sumCurvatureValues[x-1])
+		if t in locMaximas:
+			locMaximasColumn.append('MAX')
+		else:
+			locMaximasColumn.append('0')
+	newLines = [title] + [lines[x].strip() + ', '  + str(locMaximasColumn[x-1]) for x in range(1, len(locMaximasColumn)+1)]
+	fOut = open(inPath, 'w')
+	for line in newLines:
+		fOut.write(line + '\n')
+	fOut.close()
 	
 	
+
+def doAllProcessing(inPath, sumSampleWidth = 300):
+	outPath = inPath[:-4] + 'Data.txt'
+	addDetails(inPath, outPath)
+	addSumCurvaturesToDataFile(outPath, sumSampleWidth)
+	addSumCurvatureMaximumsToDataFile(outPath)
+
+	
+	
+doAllProcessing(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvatures.txt")
 a = [0,1,0, 3, 4, 5, 3, 6, 7, 8, 7, 6, 7, 5, 9, 9, 9, 0, 1]
 
 #addDetails(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvatures.txt", r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesData.txt")
 
-addSumCurvaturesToDataFile(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesData.txt")
+#addSumCurvatureMaximumsToDataFile(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesData.txt")
 	
 #The following 5 lines of code will create a combined data file for each patient with all their scans. 
 #idList = ['PTAF0056', 'PTAJ0023', 'PTAJ0095', 'PTAM0029', 'PTAP0049', 'PTAT0093', 'PTBB0002', 'PTBB0024', 'PTBC0016', 'PTBC0017', 'PTBD0033', 'PTBG0026', 'TEST0012']
