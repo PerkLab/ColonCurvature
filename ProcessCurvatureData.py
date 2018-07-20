@@ -2,14 +2,15 @@ def addDetails(inPath, outputPath):
 	'''A function that takes the path of a text file and creates a new text file with the point number,
 	and the percentage of how far the point is along the list. Easy to import to Excel'''
 	inFile = open(inPath, 'r')
-	data = inFile.readlines()
+	lines = inFile.readlines()
+	inFile.close()
+	lines = [x.strip().split(', ') for x in lines]
 	outFile = open(outputPath, 'w')
 	outFile.write(inPath[-26:] + "\n")
-	for count, item in enumerate(data):
-		if item != '' and item !="\n":
-			outFile.write('{}, {}, {}'.format(count, count/(len(data)-2)*100, item))
+	for count, item in enumerate(lines):
+		if item != '' and item !="\n" and item != ['']:
+			outFile.write('{}, {}, {}, {}, {}, {}'.format(count, count/(len(lines)-2)*100, item[1], item[2], item[3], item[0]) + '\n')
 	#outFile.write('***' + "\n")
-	inFile.close()
 	outFile.close()
 	
 #addDetails(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBD0033\PTBD0033_ProCurvatures.txt",r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBD0033\testing.txt")
@@ -104,7 +105,7 @@ def addSumCurvaturesToDataFile(inPath, width = 10):
 	lines = fIn.readlines()
 	fIn.close()
 	title = lines[0].strip()
-	curvatureValues = [x.strip().split(', ')[2] for x in lines[1:]]
+	curvatureValues = [x.strip().split(', ')[5] for x in lines[1:]]
 	sumCurvatureValues = getSumCurvatures(curvatureValues, width)
 	newLines = [title] + [lines[x].strip() + ', '  + str(sumCurvatureValues[x-1]) for x in range(1, len(sumCurvatureValues)+1)]
 	fOut = open(inPath, 'w')
@@ -117,7 +118,7 @@ def addSumCurvatureMaximumsToDataFile(inPath):
 	lines = fIn.readlines()
 	fIn.close()
 	title = lines[0].strip()
-	sumCurvatureValues = [x.strip().split(', ')[3] for x in lines[1:]]
+	sumCurvatureValues = [x.strip().split(', ')[6] for x in lines[1:]]
 	sumCurvatureValues = [float(y) for y in sumCurvatureValues]
 	locMaximas = findLocalMaximas(sumCurvatureValues)
 	#xVals = [x.strip().split(', ')[0] for x in lines[1:]]
@@ -145,8 +146,11 @@ def doAllProcessing(inPath, sumSampleWidth = 300):
 
 	
 	
-doAllProcessing(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvatures.txt")
+#doAllProcessing(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvatures.txt")
 a = [0,1,0, 3, 4, 5, 3, 6, 7, 8, 7, 6, 7, 5, 9, 9, 9, 0, 1]
+
+#addDetails(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvatures.txt", r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesTest.txt")
+doAllProcessing(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesCopy.txt")
 
 #addDetails(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvatures.txt", r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesData.txt")
 

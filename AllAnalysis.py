@@ -101,34 +101,34 @@ def centerPointsFromFile(patPath, mode):
 
 #function to return a curve model from fiducial list node
 def doMarkupsToModel(markups):
-    markupsToModelNode = slicer.vtkMRMLMarkupsToModelNode()
-    markupsToModelNode.SetName('MyMarkupsToModelNode')
-    slicer.mrmlScene.AddNode(markupsToModelNode)
+	markupsToModelNode = slicer.vtkMRMLMarkupsToModelNode()
+	markupsToModelNode.SetName('MyMarkupsToModelNode')
+	slicer.mrmlScene.AddNode(markupsToModelNode)
 
-    markupsToModelNode.SetAndObserveInputNodeID(markups.GetID())
+	markupsToModelNode.SetAndObserveInputNodeID(markups.GetID())
 
-    outputCurve = slicer.vtkMRMLModelNode()
-    slicer.mrmlScene.AddNode(outputCurve)
-    outputCurve.SetName(markups.GetName()[:-17]+'Curve')
+	outputCurve = slicer.vtkMRMLModelNode()
+	slicer.mrmlScene.AddNode(outputCurve)
+	outputCurve.SetName(markups.GetName()[:-17]+'Curve')
 
-    markupsToModelNode.SetAndObserveModelNodeID(outputCurve.GetID())
-    markupsToModelNode.SetModelType(1)
-    markupsToModelNode.SetModelType(1)
-    markupsToModelNode.SetCurveType(3)
-    markupsToModelNode.SetPolynomialFitType(1)
-    markupsToModelNode.SetPolynomialOrder(2)
-    markupsToModelNode.SetPolynomialSampleWidth(0.05)
-    markupsToModelNode.SetTubeRadius(0)
-    
-    return outputCurve
+	markupsToModelNode.SetAndObserveModelNodeID(outputCurve.GetID())
+	markupsToModelNode.SetModelType(1)
+	markupsToModelNode.SetModelType(1)
+	markupsToModelNode.SetCurveType(3)
+	markupsToModelNode.SetPolynomialFitType(1)
+	markupsToModelNode.SetPolynomialOrder(2)
+	markupsToModelNode.SetPolynomialSampleWidth(0.05)
+	markupsToModelNode.SetTubeRadius(0)
+	
+	return outputCurve
 	
 	
 #function to apply curve gen to file path, output to new file in same directory
 def MarkupFileToModelFile(inPath):
-    outPath = inPath[:-17]+'Curve.vtk'
-    print(outPath)
-    [success, markups] = slicer.util.loadMarkupsFiducialList(inPath, returnNode=True)
-    slicer.util.saveNode(doMarkupsToModel(markups), outPath)
+	outPath = inPath[:-17]+'Curve.vtk'
+	print(outPath)
+	[success, markups] = slicer.util.loadMarkupsFiducialList(inPath, returnNode=True)
+	slicer.util.saveNode(doMarkupsToModel(markups), outPath)
 	
 
 
@@ -138,18 +138,18 @@ direc = "D:\ColonCurves_JL\CtVolumes\\"
 idList = ['PTAF0056','PTAJ0023', 'PTAJ0095', 'PTAM0029', 'PTAP0049', 'PTAT0093', 'PTBB0002', 'PTBB0024', 'PTBC0016', 'PTBC0017', 'PTBD0033', 'PTBG0026' ]
 #idList = ['PTAF0056']
 for x in idList:
-    slicer.mrmlScene.Clear(0)
-    supPath = direc + x + "\\" + x + "_SupCenterPoints.fcsv"
-    proPath = direc + x + "\\" + x + "_ProCenterPoints.fcsv"
-    
-    try:
-        MarkupFileToModelFile(supPath)
-    except:
-        print('Failed supine curve! ' + supPath)
-    try:
-        MarkupFileToModelFile(proPath)
-    except:
-        print('Failed prone curve! ' + proPath)
+	slicer.mrmlScene.Clear(0)
+	supPath = direc + x + "\\" + x + "_SupCenterPoints.fcsv"
+	proPath = direc + x + "\\" + x + "_ProCenterPoints.fcsv"
+	
+	try:
+		MarkupFileToModelFile(supPath)
+	except:
+		print('Failed supine curve! ' + supPath)
+	try:
+		MarkupFileToModelFile(proPath)
+	except:
+		print('Failed prone curve! ' + proPath)
 '''
 
 
@@ -162,34 +162,43 @@ for x in idList:
 
 #a function to open a vtk curve in slicer, use curvemaker to find curvatures, and save them to text files
 def CurveFileToCurvaturesFile(inPath):
-    
-    [success, n] = slicer.util.loadModel(inPath, returnNode = True)
-    #print(n)
-    #n = slicer.util.getFirstNodeByName(inPath[-17:])
-    polyData = n.GetPolyData()
-    import CurveMaker
-    CurveMaker.CurveMakerLogic()
-    curvatureArray = vtk.vtkDoubleArray()
-    #print(polyData)
-    avgCurve, minCurve, maxCurve = CurveMaker.CurveMakerLogic().computeCurvatures( polyData, curvatureArray )
+	
+	[success, n] = slicer.util.loadModel(inPath, returnNode = True)
+	#print(n)
+	#n = slicer.util.getFirstNodeByName(inPath[-17:])
+	polyData = n.GetPolyData()
+	import CurveMaker
+	CurveMaker.CurveMakerLogic()
+	curvatureArray = vtk.vtkDoubleArray()
+	#print(polyData)
+	avgCurve, minCurve, maxCurve = CurveMaker.CurveMakerLogic().computeCurvatures( polyData, curvatureArray )
 
-    polyData.GetPointData().AddArray(curvatureArray)
-    nd = n.GetDisplayNode()
+	
+	
+	polyData.GetPointData().AddArray(curvatureArray)
+	nd = n.GetDisplayNode()
 
-    nd.SetActiveScalarName('Curvature')
-    nd.SetScalarVisibility(1)
-    
-    curvatureList = [curvatureArray.GetTuple1(x) for x in range(curvatureArray.GetNumberOfTuples())]
-    stringCurvatureList = [str(x)+"\n" for x in curvatureList]
-    stringCurvatureList.append("\n")
-    
-    outPath = inPath[:-9] + "Curvatures.txt"
-    print(outPath)
-    outFile = open(outPath, 'w')
-    outFile.writelines(stringCurvatureList)
-    outFile.close()
-    
-    slicer.util.saveNode(n, inPath)
+	nd.SetActiveScalarName('Curvature')
+	nd.SetScalarVisibility(1)
+	
+
+	curvatureList = [curvatureArray.GetTuple1(x) for x in range(curvatureArray.GetNumberOfTuples())]
+	stringCurvatureList = [str(x) for x in curvatureList]
+	#stringCurvatureList.append("\n")
+	
+	points = polyData.GetPoints()
+	pointList = [points.GetPoint(x) for x in range(points.GetNumberOfPoints())]
+	
+	newLines = [stringCurvatureList[x] + ', ' + str(pointList[x][0]) + ', ' + str(pointList[x][1]) + ', ' + str(pointList[x][2]) + '\n' for x in range(len(pointList))]
+	newLines.append("\n")
+	
+	outPath = inPath[:-9] + "Curvatures.txt"
+	print(outPath)
+	outFile = open(outPath, 'w')
+	outFile.writelines(newLines)
+	outFile.close()
+	
+	slicer.util.saveNode(n, inPath)
 	
 #process all the curve files
 '''
@@ -197,18 +206,18 @@ direc = "D:\ColonCurves_JL\CtVolumes\\"
 idList = ['PTAF0056','PTAJ0023', 'PTAJ0095', 'PTAM0029', 'PTAP0049', 'PTAT0093', 'PTBB0002', 'PTBB0024', 'PTBC0016', 'PTBC0017', 'PTBD0033', 'PTBG0026' ]
 #idList = ['PTAF0056']
 for x in idList:
-    slicer.mrmlScene.Clear(0)
-    supPath = direc + x + "\\" + x + "_SupCurve.vtk"
-    proPath = direc + x + "\\" + x + "_ProCurve.vtk"
-    
-    try:
-        CurveFileToCurvaturesFile(supPath)
-    except:
-        print('Failed supine curvatures! ' + supPath)
-    try:
-        CurveFileToCurvaturesFile(proPath)
-    except:
-        print('Failed prone curvatures! ' + proPath)
+	slicer.mrmlScene.Clear(0)
+	supPath = direc + x + "\\" + x + "_SupCurve.vtk"
+	proPath = direc + x + "\\" + x + "_ProCurve.vtk"
+	
+	try:
+		CurveFileToCurvaturesFile(supPath)
+	except:
+		print('Failed supine curvatures! ' + supPath)
+	try:
+		CurveFileToCurvaturesFile(proPath)
+	except:
+		print('Failed prone curvatures! ' + proPath)
 
 '''
 
@@ -326,11 +335,11 @@ def analyzePatient(patientPath, modeList = ['sup', 'pro']):
 	
 
 #do it
-analyzePatient("C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTAP0049", ['pro'])
+#analyzePatient("C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTAP0049", ['pro'])
 
 
 
-
+CurveFileToCurvaturesFile(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurve.vtk")
 
 
 
