@@ -78,7 +78,47 @@ def addDetailsStackMany(inFileList, outFilePath):
 			pass
 	outFile.close()
 	
+def getSumCurvatures(curvaturesList, width):
+	'''A function which takes a list, and it returns a new list of equal length, where each value corresponds
+	to the same indexed value in the first list, plus the all the items 'width' positions up and down the list.'''
+	sumList = []
+	for x in range(len(curvaturesList)):
+		subList = (curvaturesList[max(x-width, 0): min(x+width+1, len(curvaturesList))])
+		subList = [float(y) for y in subList]
+		sumList.append(sum(subList))
+	return sumList
+
+def findLocalMaximas(inList):
+	'''A function to return a list of the local maximas of an input list. '''
+	localMaximas = []
+	for x in range(1, len(inList)-1):
+		currentThreeList = inList[x-1:x+2]
+		if currentThreeList[0]<currentThreeList[1] and currentThreeList[1] > currentThreeList[2]:
+			localMaximas.append((x+1, currentThreeList[1]))
+	return localMaximas
+
+def addSumCurvaturesToDataFile(inPath, width = 10):
+	'''A fucntion to modify a detailed data file with curvatures, by adding a column 
+	that contains the sum of curvatures in a given interval for every point '''
+	fIn = open(inPath, 'r')
+	lines = fIn.readlines()
+	fIn.close()
+	title = lines[0].strip()
+	curvatureValues = [x.strip().split(', ')[2] for x in lines[1:]]
+	sumCurvatureValues = getSumCurvatures(curvatureValues, width)
+	newLines = [title] + [lines[x].strip() + ', '  + str(sumCurvatureValues[x-1]) for x in range(1, len(sumCurvatureValues)+1)]
+	fOut = open(inPath, 'w')
+	for line in newLines:
+		fOut.write(line + '\n')
+	fOut.close()
 	
+	
+	
+a = [0,1,0, 3, 4, 5, 3, 6, 7, 8, 7, 6, 7, 5, 9, 9, 9, 0, 1]
+
+#addDetails(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvatures.txt", r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesData.txt")
+
+addSumCurvaturesToDataFile(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesData.txt")
 	
 #The following 5 lines of code will create a combined data file for each patient with all their scans. 
 #idList = ['PTAF0056', 'PTAJ0023', 'PTAJ0095', 'PTAM0029', 'PTAP0049', 'PTAT0093', 'PTBB0002', 'PTBB0024', 'PTBC0016', 'PTBC0017', 'PTBD0033', 'PTBG0026', 'TEST0012']
@@ -114,10 +154,8 @@ allFilesList = supFilesList + proFilesList + leftDownFilesList
 #combineDataFiles(allFilesList, outFilePath)
 
 
-supFilesList = [x + '\\' + x[-8:] + '_SupCurvatures.txt' for x in patList]
-proFilesList = [x + '\\' + x[-8:] + '_ProCurvatures.txt' for x in patList]
-leftDownFilesList = [x + '\\' + x[-8:] + '_LeftDownCurvatures.txt' for x in patList]
-addDetailsStackMany(supFilesList, r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\AllSupDataStacked.txt")
+
+#addDetailsStackMany(supFilesList, r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\AllSupDataStacked.txt")
 		
 
 #The following 6 lines create more detailed data files for all the patients:
