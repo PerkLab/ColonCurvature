@@ -1,3 +1,4 @@
+import math
 #m = slicer.vtkMRMLMarkupsFiducialNode()
 #slicer.mrmlScene.AddNode(m)
 #m.AddFiducial(-10, -40, 1111)
@@ -23,4 +24,18 @@ def addFiducialsOnCurvatureMaximums(inPath):
 			m.AddFiducial(float(xVals[i]), float(yVals[i]), float(zVals[i]))
 			
 
-addFiducialsOnCurvatureMaximums(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesCopyData.txt")
+#addFiducialsOnCurvatureMaximums(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesCopyData.txt")
+
+
+def generateCurve():
+	coords = []
+	
+	for x in range(300):
+		coords.append((100,x/2,math.sin(x)*8))
+	
+	markups = slicer.vtkMRMLMarkupsFiducialNode()
+	slicer.mrmlScene.AddNode(markups)
+	for i in coords:
+		markups.AddFiducial(i[0], i[1], i[2])
+
+generateCurve()
