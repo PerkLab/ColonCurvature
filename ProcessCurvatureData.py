@@ -124,6 +124,7 @@ def findLocalMaximas(inList, minDist = 11):
 		if localMaximas[x+1][0] - i[0]< minDist:
 			closePointsList.append(localMaximas[x+1])
 			addedOne = True
+	newLocalMaximas.append(localMaximas[-1])
 	return newLocalMaximas
 
 def addSumCurvaturesToDataFile(inPath, width = 10):
@@ -141,14 +142,14 @@ def addSumCurvaturesToDataFile(inPath, width = 10):
 		fOut.write(line + '\n')
 	fOut.close()
 	
-def addSumCurvatureMaximumsToDataFile(inPath):
+def addSumCurvatureMaximumsToDataFile(inPath, minMaxPointDist = 11):
 	fIn = open(inPath, 'r')
 	lines = fIn.readlines()
 	fIn.close()
 	title = lines[0].strip()
 	sumCurvatureValues = [x.strip().split(', ')[6] for x in lines[1:]]
 	sumCurvatureValues = [float(y) for y in sumCurvatureValues]
-	locMaximas = findLocalMaximas(sumCurvatureValues)
+	locMaximas = findLocalMaximas(sumCurvatureValues, minMaxPointDist)
 	#xVals = [x.strip().split(', ')[0] for x in lines[1:]]
 	#xVals = [int(x) for x in xVals]
 	locMaximasColumn = []
@@ -166,11 +167,11 @@ def addSumCurvatureMaximumsToDataFile(inPath):
 	
 	
 
-def doAllProcessing(inPath, sumSampleWidth = 300):
+def doAllProcessing(inPath, sumSampleWidth = 300, minMaxPointDist = 11):
 	outPath = inPath[:-4] + 'Data.txt'
 	addDetails(inPath, outPath)
 	addSumCurvaturesToDataFile(outPath, sumSampleWidth)
-	addSumCurvatureMaximumsToDataFile(outPath)
+	addSumCurvatureMaximumsToDataFile(outPath, minMaxPointDist)
 
 	
 	
@@ -178,7 +179,7 @@ def doAllProcessing(inPath, sumSampleWidth = 300):
 a = [0,1,0, 3, 4, 5, 3, 6, 7, 8, 7, 6, 7, 5, 9, 9, 9, 0, 1]
 
 #addDetails(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvatures.txt", r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesTest.txt")
-doAllProcessing(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesCopy.txt", 0)
+doAllProcessing(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesCopy.txt", 0, 11)
 
 #addDetails(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvatures.txt", r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesData.txt")
 
