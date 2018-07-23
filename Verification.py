@@ -26,7 +26,8 @@ def addFiducialsOnCurvatureMaximums(inPath):
 			
 			
 def addFiducialsOnCurvatureMinimums(inPath):
-		'''A function to take the path of the curvatures data file, and generate slicer fiducials on the model to verify'''
+		'''A function to take the path of the curvatures data file, and generate slicer fiducials
+		on the model's extreme values to verify'''
 		fIn = open(inPath, 'r')
 		lines = fIn.readlines()
 		fIn.close()
@@ -46,33 +47,11 @@ def addFiducialsOnCurvatureMinimums(inPath):
 		for i in range(len(xVals)):
 			m.AddFiducial(float(xVals[i]), float(yVals[i]), float(zVals[i]))
 			
-def addFiducialsOnDistanceMinimums(inPath):
-		'''A function to take the path of the curvatures data file, and generate slicer fiducials on the model to verify'''
-		fIn = open(inPath, 'r')
-		lines = fIn.readlines()
-		fIn.close()
-		xVals = []
-		yVals = []
-		zVals = []
-
-		for x in range(1, len(lines)):
-			if int(lines[x].strip().split(', ')[8]) < 40:
-				xVals.append(lines[x].strip().split(', ')[2])
-				yVals.append(lines[x].strip().split(', ')[3])
-				zVals.append(lines[x].strip().split(', ')[4])
-		m = slicer.vtkMRMLMarkupsFiducialNode()
-		slicer.mrmlScene.AddNode(m)
-		
-		for i in range(len(xVals)):
-			m.AddFiducial(float(xVals[i]), float(yVals[i]), float(zVals[i]))
-			
-pathOne = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesCopyData.txt"
-addFiducialsOnCurvatureMaximums(pathOne)
-addFiducialsOnCurvatureMinimums(pathOne)
 
 
 
 def generateCurve():
+	'''A function to generate a known curve for analysis. '''
 	coords = []
 	
 	for x in range(300):
@@ -84,3 +63,15 @@ def generateCurve():
 		markups.AddFiducial(i[0], i[1], i[2])
 
 #generateCurve()
+
+
+
+
+
+
+
+
+
+
+
+
