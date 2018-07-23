@@ -253,13 +253,63 @@ def reprocessLocMinMaxs(locMinList, locMaxList, sumCurvatureValues):
 	print('Out MAX: ', newMaxList)
 	return newMinList, newMaxList
 	
-
+def unCluster(minList, maxList, curvatures):
+	#print('In Whole Set: ' , curvatures)
+	#print('In MIN: ' , minList)
+	#print('In MAX: ' , maxList)
+	newMinList = []
+	newMaxList = []
+	extremeList = []
+	
+	for x in maxList:
+		extremeList.append((x[0], x[1], 'MAX'))
+	for x in minList:
+		extremeList.append((x[0], x[1], 'MIN'))
+	extremeList.sort(key = itemgetter(0))
+	
+	running = True
+	count  = 0
+	while running:
+		if count>=len(extremeList):
+			break
+		subList = [extremeList[count]]
+		for x in range(1, len(curvatures)):
+			#print(extremeList[count+x][2])
+			#print(extremeList[count][2])
+			if count+x < len(extremeList) and extremeList[count+x][2] == extremeList[count][2]:
+				subList.append(extremeList[count+x])
+			else:
+				numberList = [int(z[0]) for z in subList]
+				middleNumber = int(round(stat.mean(numberList)))
+				
+				middlePoint = (middleNumber, curvatures[middleNumber-1], extremeList[count][2])
+				if middlePoint[2]=='MAX':
+					newMaxList.append(middlePoint)
+				else:
+					newMinList.append(middlePoint)
+				count += len(subList) - 1
+				#print(subList)
+				break
+		count+=1
+	
+	newMinList = [(i[0], i[1]) for i in newMinList]
+	newMaxList = [(i[0], i[1]) for i in newMaxList]
+	#print('Out MIN: ', newMinList)
+	#print('Out MAX: ', newMaxList)
+	return newMinList, newMaxList
+	
+	
+	
+	
+	
+	
+	
 	
 maxList = [(1, 5), (3, 4), (5, 7), (7, 8), (11, 9)]
 minList = [(2, 1), (4, 0.5), (8, 0.2), (10, 0.3)]
 curvatures = [5,1,4,0.5,7, 7.5, 8,0.2, 0.25, 0.3, 9]
 
-reprocessLocMinMaxs(minList, maxList, curvatures)
+#unCluster(minList, maxList, curvatures)
 	
 
 	
@@ -289,7 +339,10 @@ def addSumCurvatureMaxMinsToDataFile(inPath, minPointDist = 0, threshold = 0):
 	sumCurvatureValues = [float(y) for y in sumCurvatureValues]
 	locMaximas = findLocalMaximas(sumCurvatureValues, minPointDist, threshold)
 	locMinimas = findLocalMinimas(sumCurvatureValues, minPointDist, threshold)
-	reprocessLocMinMaxs(locMinimas, locMaximas, sumCurvatureValues)
+	
+	#print('Calling unCluster!')
+	locMinimas, locMaximas = unCluster(locMinimas, locMaximas, sumCurvatureValues)
+	
 	#xVals = [x.strip().split(', ')[0] for x in lines[1:]]
 	#xVals = [int(x) for x in xVals]
 	locExtremesColumn = []
@@ -347,7 +400,7 @@ a = [0,1,0, 3, 4, 5, 3, 6, 7, 8, 7, 6, 7, 5, 9, 9, 9, 0, 1]
 #addDetails(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvatures.txt", r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesTest.txt")
 pathOne = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesCopy.txt"
 pathTwo = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\Current\Curvatures.txt"
-#doAllProcessing(pathOne, 0, 0, 1)
+doAllProcessing(pathOne, 0, 0, 1)
 
 #addDetails(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvatures.txt", r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesData.txt")
 
