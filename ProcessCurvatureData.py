@@ -272,6 +272,29 @@ def addSumCurvatureMaxMinsToDataFile(inPath, minPointDist = 0, threshold = 0):
 		fOut.write(line + '\n')
 	fOut.close()
 	
+	
+
+	
+def addDegreeChangesToFile(inPath):
+	fIn = open(inPath, 'r')
+	lines = fIn.readlines()
+	fIn.close()
+	title = lines[0].strip()
+	curvatureValues = [x.strip().split(', ')[5] for x in lines[1:]]
+	maxMinTypes = [x.strip().split(', ')[7] for x in lines[1:]]
+	coords = [(x.strip().split(', ')[2], x.strip().split(', ')[3], x.strip().split(', ')[4]) for x in lines[1:]]
+	
+	firstOne = 
+	for y in range(len(maxMinTypes)):
+		if maxMinTypes[y] == 'MAX'
+	
+	
+	newLines = [title] + [lines[x].strip() + ', '  + str(sumCurvatureValues[x-1]) for x in range(1, len(sumCurvatureValues)+1)]
+	fOut = open(inPath, 'w')
+	for line in newLines:
+		fOut.write(line + '\n')
+	fOut.close()
+	
 
 def doAllProcessing(inPath, sumSampleWidth = 0, minMaxPointDist = 0, threshold = 1):
 	'''A function to do all post slicer processing and generate a data file with point number, point

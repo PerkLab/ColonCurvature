@@ -1,7 +1,5 @@
 import math
-#m = slicer.vtkMRMLMarkupsFiducialNode()
-#slicer.mrmlScene.AddNode(m)
-#m.AddFiducial(-10, -40, 1111)
+
 
 def addFiducialsOnCurvatureMaximums(inPath):
 		'''A function to take the path of the curvatures data file, and generate slicer fiducials on the model to verify'''
