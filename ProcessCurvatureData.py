@@ -1,5 +1,5 @@
 import statistics as stat
-
+from operator import itemgetter
 
 
 def addDetails(inPath, outputPath):
@@ -92,14 +92,41 @@ def getSumCurvatures(curvaturesList, width):
 		subList = [float(y) for y in subList]
 		sumList.append(sum(subList))
 	return sumList
+	
+def getDistForCurvatureSum(curvaturesList, neededSum = 6):
+	distList = []
+	for x in range(len(curvaturesList)):
+		currentSum = 0
+		dist = 0
+		while currentSum<neededSum:
+			dist +=1
+			subList = (curvaturesList[max(x-dist, 0): min(x+dist+1, len(curvaturesList))])
+			subList = [float(y) for y in subList]
+			currentSum = sum(subList)
+			actualDist = len(subList)
+		distList.append(actualDist)
+	return distList
 
-def findLocalMaximas(inList, minDist = 11):
+def addDistForCurvatureSumToDataFile(inPath, neededSum = 6):
+	fIn = open(inPath, 'r')
+	lines = fIn.readlines()
+	fIn.close()
+	title = lines[0].strip()
+	curvatureValues = [x.strip().split(', ')[5] for x in lines[1:]]
+	distValues = getDistForCurvatureSum(curvatureValues, neededSum)
+	newLines = [title] + [lines[x].strip() + ', '  + str(distValues[x-1]) for x in range(1, len(distValues)+1)]
+	fOut = open(inPath, 'w')
+	for line in newLines:
+		fOut.write(line + '\n')
+	fOut.close()
+
+def findLocalMaximas(inList, minDist = 0, threshold = 0):
 	'''A function to return a list of the local maximas of an input list. '''
 	avgCurvature = stat.mean(inList)
 	localMaximas = []
 	for x in range(1, len(inList)-1):
 		currentThreeList = inList[x-1:x+2]
-		if currentThreeList[0]<currentThreeList[1] and currentThreeList[1] > currentThreeList[2] and currentThreeList[1]> avgCurvature:
+		if currentThreeList[0]<currentThreeList[1] and currentThreeList[1] > currentThreeList[2] and currentThreeList[1]> avgCurvature*threshold:
 			localMaximas.append((x+1, currentThreeList[1]))
 	#reprocess localMaximas:
 	'''reprocessing will iterate through the list and find clusters of max points,
@@ -126,6 +153,116 @@ def findLocalMaximas(inList, minDist = 11):
 			addedOne = True
 	newLocalMaximas.append(localMaximas[-1])
 	return newLocalMaximas
+	
+def findLocalMinimas(inList, minDist = 0, threshold = 0):
+	'''A function to return a list of the local maximas of an input list. '''
+	avgCurvature = stat.mean(inList)
+	localMinimas = []
+	for x in range(1, len(inList)-1):
+		currentThreeList = inList[x-1:x+2]
+		if currentThreeList[0]>currentThreeList[1] and currentThreeList[1] < currentThreeList[2] and currentThreeList[1] < avgCurvature/(threshold+0.001):
+			localMinimas.append((x+1, currentThreeList[1]))
+	#reprocess localMinimas:
+	'''reprocessing will iterate through the list and find clusters of max points,
+	where there is achain of points with less than minDist between them, and this procedss replaces this
+	chain with a single point, in the middle of where the chain was. '''
+	newLocalMinimas = []
+	closePointsList = []
+	addedOne = False
+	for x, i in enumerate(localMinimas[:-1]):
+		if not addedOne:
+			if len(closePointsList)==0:
+				pass
+			elif len(closePointsList)<2:
+				newLocalMinimas.append(closePointsList[0])
+				closePointsList = []
+			elif len(closePointsList)>1:
+				newLocalMinimas.append(closePointsList[len(closePointsList)//2])
+				closePointsList = []
+		addedOne = False
+		if closePointsList == []:
+			closePointsList = [i]
+		if localMinimas[x+1][0] - i[0]< minDist:
+			closePointsList.append(localMinimas[x+1])
+			addedOne = True
+	newLocalMinimas.append(localMinimas[-1])
+	return newLocalMinimas
+
+	
+def reprocessLocMinMaxs(locMinList, locMaxList, sumCurvatureValues):
+	print('In Whole Set: ' , sumCurvatureValues)
+	print('In MIN: ' , locMinList)
+	print('In MAX: ' , locMaxList)
+	joining = True
+	count = 0
+	#extremeList = locMaxList + locMinList
+	newMinList = []
+	newMaxList= []
+	extremeList = []
+	toSkip = 0
+	for x in locMaxList:
+		extremeList.append((x[0], x[1], 'MAX'))
+	for x in locMinList:
+		extremeList.append((x[0], x[1], 'MIN'))
+	extremeList.sort(key = itemgetter(0))
+	
+	for x, i in enumerate(extremeList):
+		if i[2]=='MAX':
+			
+			if toSkip<=0:
+				subList = [i]
+				looking = True
+				while looking:
+					if x+len(subList) < len(extremeList) and extremeList[x+len(subList)][2]=='MAX':
+						subList.append(extremeList[x+len(subList)])
+					else:
+						looking = False
+				
+				toSkip = len(subList) - 1
+					
+				pointNumList = [int(y[0]) for y in subList]
+				newPointNum = int(round(stat.mean(pointNumList)))
+				
+				newPoint = (newPointNum, sumCurvatureValues[newPointNum-1])
+				newMaxList.append(newPoint)
+			else:
+				toSkip-=1
+			
+		elif i[2]=='MIN':
+			
+			if toSkip<=0:
+				subList = [i]
+				looking = True
+				while looking:
+					if x+len(subList) < len(extremeList) and extremeList[x+len(subList)][2]=='MAX':
+						subList.append(extremeList[x+len(subList)])
+					else:
+						looking = False
+				
+				toSkip = len(subList) - 1
+					
+				pointNumList = [int(y[0]) for y in subList]
+				newPointNum = int(round(stat.mean(pointNumList)))
+				
+				newPoint = (newPointNum, sumCurvatureValues[newPointNum-1])
+				newMinList.append(newPoint)
+			else:
+				toSkip-=1
+			
+	print('Out MIN: ', newMinList)
+	print('Out MAX: ', newMaxList)
+	return newMinList, newMaxList
+	
+
+	
+maxList = [(1, 5), (3, 4), (5, 7), (7, 8), (11, 9)]
+minList = [(2, 1), (4, 0.5), (8, 0.2), (10, 0.3)]
+curvatures = [5,1,4,0.5,7, 7.5, 8,0.2, 0.25, 0.3, 9]
+
+reprocessLocMinMaxs(minList, maxList, curvatures)
+	
+
+	
 
 def addSumCurvaturesToDataFile(inPath, width = 10):
 	'''A fucntion to modify a detailed data file with curvatures, by adding a column 
@@ -142,19 +279,47 @@ def addSumCurvaturesToDataFile(inPath, width = 10):
 		fOut.write(line + '\n')
 	fOut.close()
 	
-def addSumCurvatureMaximumsToDataFile(inPath, minMaxPointDist = 11):
+def addSumCurvatureMaxMinsToDataFile(inPath, minPointDist = 0, threshold = 0):
 	fIn = open(inPath, 'r')
 	lines = fIn.readlines()
+	fIn.close()
 	fIn.close()
 	title = lines[0].strip()
 	sumCurvatureValues = [x.strip().split(', ')[6] for x in lines[1:]]
 	sumCurvatureValues = [float(y) for y in sumCurvatureValues]
-	locMaximas = findLocalMaximas(sumCurvatureValues, minMaxPointDist)
+	locMaximas = findLocalMaximas(sumCurvatureValues, minPointDist, threshold)
+	locMinimas = findLocalMinimas(sumCurvatureValues, minPointDist, threshold)
+	reprocessLocMinMaxs(locMinimas, locMaximas, sumCurvatureValues)
+	#xVals = [x.strip().split(', ')[0] for x in lines[1:]]
+	#xVals = [int(x) for x in xVals]
+	locExtremesColumn = []
+	for x in range(1, len(lines)):
+		t = (x, sumCurvatureValues[x-1])
+		if t in locMaximas:
+			locExtremesColumn.append('MAX')
+		elif t in locMinimas:
+			locExtremesColumn.append('MIN')
+		else:
+			locExtremesColumn.append('0')
+	newLines = [title] + [lines[x].strip() + ', '  + str(locExtremesColumn[x-1]) for x in range(1, len(locExtremesColumn)+1)]
+	fOut = open(inPath, 'w')
+	for line in newLines:
+		fOut.write(line + '\n')
+	fOut.close()
+
+def addDistForCurvatureSumMaximumsToDataFile(inPath, minMaxPointDist =0, threshold = 0, sumNeeded = 6):
+	fIn = open(inPath, 'r')
+	lines = fIn.readlines()
+	fIn.close()
+	title = lines[0].strip()
+	distValues = [x.strip().split(', ')[8] for x in lines[1:]]
+	distValues = [float(y) for y in distValues]
+	locMaximas = findLocalMaximas(distValues, minMaxPointDist, threshold)
 	#xVals = [x.strip().split(', ')[0] for x in lines[1:]]
 	#xVals = [int(x) for x in xVals]
 	locMaximasColumn = []
 	for x in range(1, len(lines)):
-		t = (x, sumCurvatureValues[x-1])
+		t = (x, distValues[x-1])
 		if t in locMaximas:
 			locMaximasColumn.append('MAX')
 		else:
@@ -165,13 +330,14 @@ def addSumCurvatureMaximumsToDataFile(inPath, minMaxPointDist = 11):
 		fOut.write(line + '\n')
 	fOut.close()
 	
-	
 
-def doAllProcessing(inPath, sumSampleWidth = 300, minMaxPointDist = 11):
+def doAllProcessing(inPath, sumSampleWidth = 0, minMaxPointDist = 0, threshold = 0):
 	outPath = inPath[:-4] + 'Data.txt'
 	addDetails(inPath, outPath)
 	addSumCurvaturesToDataFile(outPath, sumSampleWidth)
-	addSumCurvatureMaximumsToDataFile(outPath, minMaxPointDist)
+	addSumCurvatureMaxMinsToDataFile(outPath, minMaxPointDist, threshold)
+	#addDistForCurvatureSumToDataFile(outPath, neededSum)
+	#addDistForCurvatureSumMaximumsToDataFile(outPath, neededSum)
 
 	
 	
@@ -179,7 +345,9 @@ def doAllProcessing(inPath, sumSampleWidth = 300, minMaxPointDist = 11):
 a = [0,1,0, 3, 4, 5, 3, 6, 7, 8, 7, 6, 7, 5, 9, 9, 9, 0, 1]
 
 #addDetails(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvatures.txt", r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesTest.txt")
-doAllProcessing(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesCopy.txt", 0, 11)
+pathOne = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesCopy.txt"
+pathTwo = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\Current\Curvatures.txt"
+#doAllProcessing(pathOne, 0, 0, 1)
 
 #addDetails(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvatures.txt", r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesData.txt")
 

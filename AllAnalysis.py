@@ -339,7 +339,7 @@ def analyzePatient(patientPath, modeList = ['sup', 'pro']):
 
 
 
-CurveFileToCurvaturesFile(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurve.vtk")
+CurveFileToCurvaturesFile(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\Current\Model.vtk")
 
 
 
