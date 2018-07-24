@@ -306,40 +306,30 @@ def addDegreeChangesToFile(inPath):
 			vecPosList = [np.array([float(z[0]), float(z[1]), float(z[2])]) for z in subList]
 			vecOne = vecPosList[1] - vecPosList[0]
 			vecTwo = vecPosList[2] - vecPosList[1]
+			vecThree = vecPosList[2] - vecPosList[0]
 			angleChange = angleBetween(vecOne, vecTwo) * 180 / np.pi 
+			straightDist = np.linalg.norm(vecThree)
 			
-			angleChangeList.append((subList[1][4], angleChange))
+			angleChangeList.append((subList[1][4], angleChange, straightDist))
 	
 	#print(angleChangeList)
 	angleChangeValues = []
+	straightDistValues = []
 	numList = [int(x[0]) for x in angleChangeList]
 	for i in range(len(lines)-1):
 		if i in numList:
 			for x in angleChangeList:
 				if int(x[0]) == i:
 					angleChangeValues.append(x[1])
+					straightDistValues.append(x[2])
 		else:
 			angleChangeValues.append('0')
-			
-	'''
-	print(angleChangeList)
-	angleChangeValues = []
-	addCount = 0
-	valid = False
-	for i in range(len(lines)-1):
-		#print(maxMinTypes[i])
-		if maxMinTypes[i] =='MIN':
-			valid = True
-		elif i in maxPlaces and addCount<len(maxPlaces)-2:
-			angleChangeValues.append(angleChangeList[addCount])
-			addCount+=1
-			#print('yeehaw')
-		else:
-			angleChangeValues.append('0')
-	'''
+			straightDistValues.append('0')
 			
 	
-	newLines = [title] + [lines[x].strip() + ', '  + str(angleChangeValues[x-1]) for x in range(1, len(angleChangeValues)+1)]
+			
+	
+	newLines = [title] + [lines[x].strip() + ', '  + str(angleChangeValues[x-1]) + ', '  + str(straightDistValues[x-1]) for x in range(1, len(angleChangeValues)+1)]
 	fOut = open(inPath, 'w')
 	for line in newLines:
 		fOut.write(line + '\n')
