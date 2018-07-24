@@ -250,7 +250,7 @@ def addSumCurvatureMaxMinsToDataFile(inPath, minPointDist = 0, threshold = 0):
 	sumCurvatureValues = [x.strip().split(', ')[6] for x in lines[1:]]
 	sumCurvatureValues = [float(y) for y in sumCurvatureValues]
 	locMaximas = findLocalMaximas(sumCurvatureValues, minPointDist, threshold)
-	locMinimas = findLocalMinimas(sumCurvatureValues, minPointDist, threshold)
+	locMinimas = findLocalMinimas(sumCurvatureValues, minPointDist, threshold*1.5) #The minimas are currently being held at a higher threshold so the maximas are unClustered more. 
 	
 	#print('Calling unCluster!')
 	locMinimas, locMaximas = unCluster(locMinimas, locMaximas, sumCurvatureValues)
@@ -274,7 +274,7 @@ def addSumCurvatureMaxMinsToDataFile(inPath, minPointDist = 0, threshold = 0):
 	
 	
 
-	
+'''
 def addDegreeChangesToFile(inPath):
 	fIn = open(inPath, 'r')
 	lines = fIn.readlines()
@@ -284,7 +284,7 @@ def addDegreeChangesToFile(inPath):
 	maxMinTypes = [x.strip().split(', ')[7] for x in lines[1:]]
 	coords = [(x.strip().split(', ')[2], x.strip().split(', ')[3], x.strip().split(', ')[4]) for x in lines[1:]]
 	
-	firstOne = 
+	firstOne = None
 	for y in range(len(maxMinTypes)):
 		if maxMinTypes[y] == 'MAX'
 	
@@ -294,7 +294,7 @@ def addDegreeChangesToFile(inPath):
 	for line in newLines:
 		fOut.write(line + '\n')
 	fOut.close()
-	
+'''
 
 def doAllProcessing(inPath, sumSampleWidth = 0, minMaxPointDist = 0, threshold = 1):
 	'''A function to do all post slicer processing and generate a data file with point number, point
@@ -314,7 +314,8 @@ a = [0,1,0, 3, 4, 5, 3, 6, 7, 8, 7, 6, 7, 5, 9, 9, 9, 0, 1]
 #addDetails(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvatures.txt", r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesTest.txt")
 pathOne = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesCopy.txt"
 pathTwo = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\Current\Curvatures.txt"
-doAllProcessing(pathOne, 0, 0, 1)
+pathThree = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_ProCurvatures.txt"
+doAllProcessing(pathThree, 0, 0, 1)
 
 #addDetails(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvatures.txt", r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesData.txt")
 
