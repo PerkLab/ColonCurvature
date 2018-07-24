@@ -1,6 +1,6 @@
 import statistics as stat
 from operator import itemgetter
-
+import numpy as np
 
 def addDetails(inPath, outputPath):
 	'''A function that takes the path of a text file and creates a new text file with the point number,
@@ -273,28 +273,79 @@ def addSumCurvatureMaxMinsToDataFile(inPath, minPointDist = 0, threshold = 0):
 	fOut.close()
 	
 	
+def unitVector(vec):
+	return vec / np.linalg.norm(vec)
 
-'''
+	
+def angleBetween(v1,v2):
+	v1U = unitVector(v1)
+	v2U = unitVector(v2)
+	return np.arccos(np.clip(np.dot(v1U, v2U), -1.0, 1.0))
+
 def addDegreeChangesToFile(inPath):
 	fIn = open(inPath, 'r')
 	lines = fIn.readlines()
 	fIn.close()
 	title = lines[0].strip()
 	curvatureValues = [x.strip().split(', ')[5] for x in lines[1:]]
+	numVals = [x.strip().split(', ')[0] for x in lines[1:]]
 	maxMinTypes = [x.strip().split(', ')[7] for x in lines[1:]]
 	coords = [(x.strip().split(', ')[2], x.strip().split(', ')[3], x.strip().split(', ')[4]) for x in lines[1:]]
 	
-	firstOne = None
-	for y in range(len(maxMinTypes)):
-		if maxMinTypes[y] == 'MAX'
+	extremePoints = []
+	maxPlaces = []
+	for y in range(len(lines)-1):
+		if maxMinTypes[y] == 'MAX' or maxMinTypes[y] == 'MIN':
+			extremePoints.append((coords[y][0], coords[y][1], coords[y][2], maxMinTypes[y], numVals[y]))
+			
+	angleChangeList = []
+	for x in range(1, len(extremePoints)-1):
+		subList = [extremePoints[x-1], extremePoints[x], extremePoints[x+1]]
+		
+		if subList[1][3] =='MAX':
+			vecPosList = [np.array([float(z[0]), float(z[1]), float(z[2])]) for z in subList]
+			vecOne = vecPosList[1] - vecPosList[0]
+			vecTwo = vecPosList[2] - vecPosList[1]
+			angleChange = angleBetween(vecOne, vecTwo) * 180 / np.pi 
+			
+			angleChangeList.append((subList[1][4], angleChange))
 	
+	#print(angleChangeList)
+	angleChangeValues = []
+	numList = [int(x[0]) for x in angleChangeList]
+	for i in range(len(lines)-1):
+		if i in numList:
+			for x in angleChangeList:
+				if int(x[0]) == i:
+					angleChangeValues.append(x[1])
+		else:
+			angleChangeValues.append('0')
+			
+	'''
+	print(angleChangeList)
+	angleChangeValues = []
+	addCount = 0
+	valid = False
+	for i in range(len(lines)-1):
+		#print(maxMinTypes[i])
+		if maxMinTypes[i] =='MIN':
+			valid = True
+		elif i in maxPlaces and addCount<len(maxPlaces)-2:
+			angleChangeValues.append(angleChangeList[addCount])
+			addCount+=1
+			#print('yeehaw')
+		else:
+			angleChangeValues.append('0')
+	'''
+			
 	
-	newLines = [title] + [lines[x].strip() + ', '  + str(sumCurvatureValues[x-1]) for x in range(1, len(sumCurvatureValues)+1)]
+	newLines = [title] + [lines[x].strip() + ', '  + str(angleChangeValues[x-1]) for x in range(1, len(angleChangeValues)+1)]
 	fOut = open(inPath, 'w')
 	for line in newLines:
 		fOut.write(line + '\n')
 	fOut.close()
-'''
+
+	
 
 def doAllProcessing(inPath, sumSampleWidth = 0, minMaxPointDist = 0, threshold = 1):
 	'''A function to do all post slicer processing and generate a data file with point number, point
@@ -303,6 +354,7 @@ def doAllProcessing(inPath, sumSampleWidth = 0, minMaxPointDist = 0, threshold =
 	addDetails(inPath, outPath)
 	addSumCurvaturesToDataFile(outPath, sumSampleWidth)
 	addSumCurvatureMaxMinsToDataFile(outPath, minMaxPointDist, threshold)
+	addDegreeChangesToFile(outPath)
 	#addDistForCurvatureSumToDataFile(outPath, neededSum)
 	#addDistForCurvatureSumMaximumsToDataFile(outPath, neededSum)
 
