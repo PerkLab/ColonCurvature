@@ -38,6 +38,8 @@ def getStats(dataInPath):
 	lessThan160Deg = []
 	lessThan180Deg = []
 	
+	allCurves = []
+	
 	for x in curveNumbers:
 		allCurveDegrees.append(maxDegrees[x])
 		allCurveDistances.append(maxDistances[x])
@@ -62,8 +64,9 @@ def getStats(dataInPath):
 		elif maxDegrees[x]<180:
 			lessThan180Deg.append((maxDegrees[x], maxDistances[x], maxDegrees[x]/maxDistances[x]))
 			
+		allCurves.append((x, maxDegrees[x]/maxDistances[x], maxDegrees[x], maxDistances[x]))
 	
-	
+	allCurves = sorted(allCurves, key = itemgetter(1))
 	
 	
 	lessThan20DegDists = [str(x[1]) for x in sorted(lessThan20Deg, key = itemgetter(1))]
@@ -90,30 +93,48 @@ def getStats(dataInPath):
 	linesOut.append('Standard Dev of Curvature, {}'.format(stanDevCurvature))
 	linesOut.append('Variance of Curvature, {}'.format(varianceCurvature))
 	linesOut.append('')
+	
+	
 	linesOut.append('Number of Curves, {}'.format(len(allCurveDegrees)))
 	linesOut.append('Mean Degrees of Curve, {}'.format(meanCurveDegrees))
 	linesOut.append('Median Degrees of Curve, {}'.format(medianCurveDegrees))
 	linesOut.append('Mean Distance of Curve, {}'.format(meanCurveDistance))
 	linesOut.append('Median Distance of Curve, {}'.format(medianCurveDistance))
 	linesOut.append('')
+	
+	
 	linesOut.append('Number of curves < 20deg, {}'.format(len(lessThan20Deg)))
-	linesOut.append('Curve Distances: {}'.format(' '.join(lessThan20DegDists)))
+	linesOut.append('Curve Distances, {}'.format(' '.join(lessThan20DegDists)))
 	linesOut.append('Number of curves < 40deg, {}'.format(len(lessThan40Deg)))
-	linesOut.append('Curve Distances: {}'.format(' '.join(lessThan40DegDists)))
+	linesOut.append('Curve Distances, {}'.format(' '.join(lessThan40DegDists)))
 	linesOut.append('Number of curves < 60deg, {}'.format(len(lessThan60Deg)))
-	linesOut.append('Curve Distances: {}'.format(' '.join(lessThan60DegDists)))
+	linesOut.append('Curve Distances, {}'.format(' '.join(lessThan60DegDists)))
 	linesOut.append('Number of curves < 80deg, {}'.format(len(lessThan80Deg)))
-	linesOut.append('Curve Distances: {}'.format(' '.join(lessThan80DegDists)))
+	linesOut.append('Curve Distances, {}'.format(' '.join(lessThan80DegDists)))
 	linesOut.append('Number of curves < 100deg, {}'.format(len(lessThan100Deg)))
-	linesOut.append('Curve Distances: {}'.format(' '.join(lessThan100DegDists)))
+	linesOut.append('Curve Distances, {}'.format(' '.join(lessThan100DegDists)))
 	linesOut.append('Number of curves < 120deg, {}'.format(len(lessThan120Deg)))
-	linesOut.append('Curve Distances: {}'.format(' '.join(lessThan120DegDists)))
+	linesOut.append('Curve Distances, {}'.format(' '.join(lessThan120DegDists)))
 	linesOut.append('Number of curves < 140deg, {}'.format(len(lessThan140Deg)))
-	linesOut.append('Curve Distances: {}'.format(' '.join(lessThan140DegDists)))
+	linesOut.append('Curve Distances, {}'.format(' '.join(lessThan140DegDists)))
 	linesOut.append('Number of curves < 160deg, {}'.format(len(lessThan160Deg)))
-	linesOut.append('Curve Distances: {}'.format(' '.join(lessThan160DegDists)))
+	linesOut.append('Curve Distances, {}'.format(' '.join(lessThan160DegDists)))
 	linesOut.append('Number of curves < 180deg, {}'.format(len(lessThan180Deg)))
-	linesOut.append('Curve Distances: {}'.format(' '.join(lessThan180DegDists)))
+	linesOut.append('Curve Distances, {}'.format(' '.join(lessThan180DegDists)))
+	linesOut.append('')
+	
+	
+	linesOut.append('All Curves Sorted by Degrees/Distance,')
+	linesOut.append('{}, {}, {}, {}'.format('Deg/Dist', 'Num', 'Deg', 'Dist'))
+	for curve in allCurves:
+		linesOut.append('{}, {}, {}, {}'.format(curve[1], curve[0], curve[2], curve[3]))
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	fOut = open(dataOutPath, 'w')
