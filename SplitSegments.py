@@ -94,7 +94,7 @@ def splitCenterPointsFileToFiles(cenPointsInPath):
 	slicer.util.saveNode(acNode, AcOutPath)
 	slicer.util.saveNode(tcNode, TcOutPath)
 	slicer.util.saveNode(dcNode, DcOutPath)
-		
+	
 	
 	
 splitCenterPointsFileToFiles(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCenterPoints.fcsv")
