@@ -1,11 +1,13 @@
 import statistics as stat
 from operator import itemgetter
+import os
+
 
 def getStats(dataInPath):
 	fIn = open(dataInPath, 'r')
 	lines = fIn.readlines()
 	fIn.close()
-	dataOutPath = dataInPath[:-5] + 'Results.txt'
+	dataOutPath = dataInPath[:-4] + 'Results.txt'
 	title = lines[0].strip()
 	curvatureValues = [float(x.strip().split(', ')[5]) for x in lines[1:]]
 	maxMinTypes = [x.strip().split(', ')[7] for x in lines[1:]]
@@ -146,11 +148,33 @@ def getStats(dataInPath):
 	fOut.close()
 	
 	
+def compareSupineProne(patPath):
+	supPath = os.path.join(patPath, patPath[-8:] + '_SupCurvaturesDataResults.txt')
+	proPath = os.path.join(patPath, patPath[-8:] + '_ProCurvaturesDataResults.txt')
+	supIn = open(supPath, 'r')
+	supLines = supIn.readlines()
+	supIn.close()
+	proIn = open(proPath, 'r')
+	proLines = proIn.readlines()
+	proIn.close()
+	
+	outLines = []
+	outLines.append(',Supine,Prone')
+	outLines.append('{},{},{}'.format('Mean Curvatures', supLines[0].strip().split(', ')[1], supLines[0].strip(', ').split()[1]))
+	
+	outPath = os.path.join(patPath, patPath[-8:]+'_BothCurvaturesDataResults.txt')
+	fOut = open(outPath, 'w')
+	
+	for x in outLines:
+		fOut.write(x+'\n')
+	
+	
+	fOut.close()
 	
 getStats(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesData.txt")
+getStats(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_ProCurvaturesData.txt")
 	
-	
-	
+compareSupineProne(r'C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012')
 	
 	
 	
