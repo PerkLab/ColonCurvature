@@ -240,7 +240,7 @@ def addSumCurvaturesToDataFile(inPath, width = 10):
 		fOut.write(line + '\n')
 	fOut.close()
 	
-def addSumCurvatureMaxMinsToDataFile(inPath, minPointDist = 0, threshold = 0):
+def addSumCurvatureMaxMinsToDataFile(inPath, minPointDist = 0, threshold = 1, minThresholdBoost = 1.5):
 	'''A function to add a column to the data file whihc indicates if the point is at a max or a min. '''
 	fIn = open(inPath, 'r')
 	lines = fIn.readlines()
@@ -250,7 +250,7 @@ def addSumCurvatureMaxMinsToDataFile(inPath, minPointDist = 0, threshold = 0):
 	sumCurvatureValues = [x.strip().split(', ')[6] for x in lines[1:]]
 	sumCurvatureValues = [float(y) for y in sumCurvatureValues]
 	locMaximas = findLocalMaximas(sumCurvatureValues, minPointDist, threshold)
-	locMinimas = findLocalMinimas(sumCurvatureValues, minPointDist, threshold*1.5) #The minimas are currently being held at a higher threshold so the maximas are unClustered more. 
+	locMinimas = findLocalMinimas(sumCurvatureValues, minPointDist, threshold * minThresholdBoost) #The minimas are currently being held at a higher threshold so the maximas are unClustered more. 
 	
 	#print('Calling unCluster!')
 	locMinimas, locMaximas = unCluster(locMinimas, locMaximas, sumCurvatureValues)
@@ -337,16 +337,15 @@ def addDegreeChangesToFile(inPath):
 
 	
 
-def doAllProcessing(inPath, sumSampleWidth = 0, minMaxPointDist = 0, threshold = 1):
+def doAllProcessing(inPath, sumSampleWidth = 0, minMaxPointDist = 0, threshold = 1, minThresholdBoost = 1.5):
 	'''A function to do all post slicer processing and generate a data file with point number, point
 	coords, point % of length, curvature, local curvature sum, max/min...'''
 	outPath = inPath[:-4] + 'Data.txt'
 	addDetails(inPath, outPath)
 	addSumCurvaturesToDataFile(outPath, sumSampleWidth)
-	addSumCurvatureMaxMinsToDataFile(outPath, minMaxPointDist, threshold)
+	addSumCurvatureMaxMinsToDataFile(outPath, minMaxPointDist, threshold, minThresholdBoost)
 	addDegreeChangesToFile(outPath)
-	#addDistForCurvatureSumToDataFile(outPath, neededSum)
-	#addDistForCurvatureSumMaximumsToDataFile(outPath, neededSum)
+	
 
 	
 	
@@ -357,7 +356,8 @@ a = [0,1,0, 3, 4, 5, 3, 6, 7, 8, 7, 6, 7, 5, 9, 9, 9, 0, 1]
 pathOne = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesCopy.txt"
 pathTwo = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\Current\Curvatures.txt"
 pathThree = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_ProCurvatures.txt"
-doAllProcessing(pathThree, 0, 0, 1)
+pathLD = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_LeftDownCurvatures.txt"
+doAllProcessing(pathLD, 0, 0, 1, 1.5)
 
 #addDetails(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvatures.txt", r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesData.txt")
 
