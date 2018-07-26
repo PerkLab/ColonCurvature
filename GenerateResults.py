@@ -143,8 +143,8 @@ def getStats(dataInPath):
 	linesOut.append('Variance of Curvature, {}'.format(varianceCurvature))
 	linesOut.append('')
 	
-	
 	linesOut.append('Number of Curves, {}'.format(len(allCurveDegrees)))
+	linesOut.append('Number of Points, {}'.format(len(curvatureValues)))
 	linesOut.append('Mean Degrees of Curve, {}'.format(meanCurveDegrees))
 	linesOut.append('Median Degrees of Curve, {}'.format(medianCurveDegrees))
 	linesOut.append('Mean Distance of Curve, {}'.format(meanCurveDistance))
@@ -225,19 +225,18 @@ def compareSupineProne(patPath):
 	
 	outLines = []
 	outLines.append('{},Supine,Prone'.format(patId))
-	#outLines.append('{},{},{}'.format('Mean Curvatures', supLines[0].strip().split(', ')[1], supLines[0].strip(', ').split()[1]))
 	
 	for y in range(0,5):
 		outLines.append('{},{},{}'.format(supLines[y].strip().split(', ')[0], supLines[y].strip().split(', ')[1], proLines[y].strip().split(', ')[1]))
 	
-	outLines.append(supLines[6].strip())
+	outLines.append(supLines[5].strip())
 	
-	for y in range(6,11):
+	for y in range(6,12):
 		outLines.append('{},{},{}'.format(supLines[y].strip().split(', ')[0], supLines[y].strip().split(', ')[1], proLines[y].strip().split(', ')[1]))
 	
-	outLines.append(supLines[11].strip())
+	outLines.append(supLines[12].strip())
 
-	for y in range(12, 37, 3):
+	for y in range(13, 38, 3):
 		outLines.append('{},{},{}'.format(supLines[y].strip().split(', ')[0], supLines[y].strip().split(', ')[1], proLines[y].strip().split(', ')[1]))
 		outLines.append('{},{},{}'.format(supLines[y+1].strip().split(', ')[0], supLines[y+1].strip().split(', ')[1], proLines[y+1].strip().split(', ')[1]))
 	
@@ -251,14 +250,69 @@ def compareSupineProne(patPath):
 	
 	fOut.close()
 	
-#getStats(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesData.txt")
-#getStats(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_ProCurvaturesData.txt")
+
+def getDataLines(supPath, proPath, patId, section):
+	supIn = open(supPath, 'r')
+	supLines = supIn.readlines()
+	supIn.close()
+	proIn = open(proPath, 'r')
+	proLines = proIn.readlines()
+	proIn.close()
 	
-#compareSupineProne(r'C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012')
+	outLines = []
+	outLines.append('{} {},Supine,Prone'.format(patId, section))
+	
+	for y in range(0,5):
+		outLines.append('{},{},{}'.format(supLines[y].strip().split(', ')[0], supLines[y].strip().split(', ')[1], proLines[y].strip().split(', ')[1]))
+	
+	outLines.append(supLines[5].strip())
+	
+	for y in range(6,12):
+		outLines.append('{},{},{}'.format(supLines[y].strip().split(', ')[0], supLines[y].strip().split(', ')[1], proLines[y].strip().split(', ')[1]))
+	
+	outLines.append(supLines[12].strip())
+
+	for y in range(13, 38, 3):
+		outLines.append('{},{},{}'.format(supLines[y].strip().split(', ')[0], supLines[y].strip().split(', ')[1], proLines[y].strip().split(', ')[1]))
+		outLines.append('{},{},{}'.format(supLines[y+1].strip().split(', ')[0], supLines[y+1].strip().split(', ')[1], proLines[y+1].strip().split(', ')[1]))
+	
+	return outLines
 	
 	
-#getStats(r
+def comparePatientResults(patPath):
+
+	patId = patPath[-8:]
+	supPath = os.path.join(patPath, patId + '_SupCurvaturesDataResults.txt')
+	proPath = os.path.join(patPath, patId + '_ProCurvaturesDataResults.txt')
 	
+	supAcPath = os.path.join(patPath, patId + '_SupCurvaturesAcDataResults.txt')
+	proAcPath = os.path.join(patPath, patId + '_ProCurvaturesAcDataResults.txt')
+	supTcPath = os.path.join(patPath, patId + '_SupCurvaturesTcDataResults.txt')
+	proTcPath = os.path.join(patPath, patId + '_ProCurvaturesTcDataResults.txt')
+	supDcPath = os.path.join(patPath, patId + '_SupCurvaturesDcDataResults.txt')
+	proDcPath = os.path.join(patPath, patId + '_ProCurvaturesDcDataResults.txt')
+	
+	outLinesMain = getDataLines(supPath, proPath, patId, 'All')
+	outLinesAc = getDataLines(supAcPath, proAcPath, patId, 'AC')
+	outLinesTc = getDataLines(supTcPath, proTcPath, patId, 'TC')
+	outLinesDc = getDataLines(supDcPath, proDcPath, patId, 'DC')
+	
+	outLinesMain.append('')
+	outLinesAc.append('')
+	outLinesTc.append('')
+	outLinesDc.append('')
+	
+	outLinesAll = outLinesMain + outLinesAc + outLinesTc + outLinesDc
+	
+	
+	outPath = os.path.join(patPath, patPath[-8:]+'_PatientCurvatureComparison.txt')
+	fOut = open(outPath, 'w')
+	
+	for x in outLinesAll:
+		fOut.write(x+'\n')
+	
+	
+	fOut.close()
 	
 	
 	

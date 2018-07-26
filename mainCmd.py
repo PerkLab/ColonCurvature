@@ -36,7 +36,7 @@ def doAllAfterCenterPointsCMD(patPath):
 	getStats(supDataPath)
 	getStats(proDataPath)
 	
-	#getStats(supAcDataPath)
+	getStats(supAcDataPath)
 	getStats(proAcDataPath)
 	getStats(supTcDataPath)
 	getStats(proTcDataPath)
@@ -44,7 +44,7 @@ def doAllAfterCenterPointsCMD(patPath):
 	getStats(proDcDataPath)
 	
 	
-	compareSupineProne(patPath)
+	comparePatientResults(patPath)
 	
 	
 	
