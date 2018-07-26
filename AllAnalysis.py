@@ -318,10 +318,153 @@ def analyzePatient(patientPath, modeList = ['sup', 'pro']):
 	
 			
 			
+def analyzeFromSplitCenterPoints(patientPath, modeList = ['sup', 'pro']):
+	doPro, doSup, doLeftDown = False, False, False
+	
+	if 'pro' in modeList:
+		doPro = True
+	if 'sup' in modeList:
+		doSup = True
+	if 'ld' in modeList:
+		doLeftDown = True
 			
 			
-			
-			
+	cpSupPath = patientPath+ "\\" + patientPath[-8:] + "_SupCenterPoints.fcsv"
+	cpAcSupPath = patientPath+ "\\" + patientPath[-8:] + "_SupAcCenterPoints.fcsv"
+	cpTcSupPath = patientPath+ "\\" + patientPath[-8:] + "_SupTcCenterPoints.fcsv"
+	cpDcSupPath = patientPath+ "\\" + patientPath[-8:] + "_SupDcCenterPoints.fcsv"
+	
+	cpProPath = patientPath+ "\\" + patientPath[-8:] + "_ProCenterPoints.fcsv"
+	cpAcProPath = patientPath+ "\\" + patientPath[-8:] + "_ProAcCenterPoints.fcsv"
+	cpTcProPath = patientPath+ "\\" + patientPath[-8:] + "_ProTcCenterPoints.fcsv"
+	cpDcProPath = patientPath+ "\\" + patientPath[-8:] + "_ProDcCenterPoints.fcsv"
+	
+	cpLeftDownPath = patientPath+ "\\" + patientPath[-8:] + "_LeftDownCenterPoints.fcsv"
+	
+	
+	#try to generate curve model from centerpoints in both positions
+	if doPro:
+		try:
+			MarkupFileToModelFile(cpProPath)
+		except:
+			print("Failed to get prone curve. " + patientPath)
+			doPro = False
+		try:
+			MarkupFileToModelFile(cpProAcPath)
+		except:
+			print("Failed to get prone Ac curve. " + patientPath)
+			doPro = False
+		try:
+			MarkupFileToModelFile(cpProTcPath)
+		except:
+			print("Failed to get prone Tc curve. " + patientPath)
+			doPro = False
+		try:
+			MarkupFileToModelFile(cpProDcPath)
+		except:
+			print("Failed to get prone Dc curve. " + patientPath)
+			doPro = False
+	if doSup:
+		try:
+			MarkupFileToModelFile(cpSupPath)
+		except:
+			print("Failed to get supine curve. " + patientPath)
+			doSup = False
+		try:
+			MarkupFileToModelFile(cpSupAcPath)
+		except:
+			print("Failed to get supine Ac curve. " + patientPath)
+			doSup = False
+		try:
+			MarkupFileToModelFile(cpSupTcPath)
+		except:
+			print("Failed to get supine Tc curve. " + patientPath)
+			doSup = False
+		try:
+			MarkupFileToModelFile(cpSupDcPath)
+		except:
+			print("Failed to get supine Dc curve. " + patientPath)
+			doSup = False
+	if doLeftDown:
+		try:
+			MarkupFileToModelFile(cpLeftDownPath)
+		except:
+			print("Failed to get left down curve. " + patientPath)
+			doLeftDown = False
+
+	
+	
+	
+	
+	
+	curveSupPath = patientPath+ "\\" + patientPath[-8:] + "_SupCurve.vtk"
+	curveSupAcPath = patientPath+ "\\" + patientPath[-8:] + "_SupAcCurve.vtk"
+	curveSupTcPath = patientPath+ "\\" + patientPath[-8:] + "_SupTcCurve.vtk"
+	curveSupDcPath = patientPath+ "\\" + patientPath[-8:] + "_SupDcCurve.vtk"
+	
+	curveProPath = patientPath+ "\\" + patientPath[-8:] + "_ProCurve.vtk"
+	curveProAcPath = patientPath+ "\\" + patientPath[-8:] + "_ProAcCurve.vtk"
+	curveProTcPath = patientPath+ "\\" + patientPath[-8:] + "_ProTcCurve.vtk"
+	curveProDcPath = patientPath+ "\\" + patientPath[-8:] + "_ProDcCurve.vtk"
+	
+	curveLeftDownPath = patientPath+ "\\" + patientPath[-8:] + "_LeftDownCurve.vtk"
+
+
+	#try to get the curvature data for both positions
+	if doPro:
+		try:
+			CurveFileToCurvaturesFile(curveProPath)
+		except:
+			print("Failed to get prone curvatures. " + patientPath)
+			doPro = False
+		try:
+			CurveFileToCurvaturesFile(curveProAcPath)
+		except:
+			print("Failed to get prone Ac curvatures. " + patientPath)
+			doPro = False
+		try:
+			CurveFileToCurvaturesFile(curveProTcPath)
+		except:
+			print("Failed to get prone Tc curvatures. " + patientPath)
+			doPro = False
+		try:
+			CurveFileToCurvaturesFile(curveProDcPath)
+		except:
+			print("Failed to get prone Dc curvatures. " + patientPath)
+			doPro = False
+	if doSup:
+		try:
+			CurveFileToCurvaturesFile(curveSupPath)
+		except:
+			print("Failed to get supine curvatures. " + patientPath)
+			doSup = False
+		try:
+			CurveFileToCurvaturesFile(curveSupAcPath)
+		except:
+			print("Failed to get supine Ac curvatures. " + patientPath)
+			doSup = False
+		try:
+			CurveFileToCurvaturesFile(curveSupTcPath)
+		except:
+			print("Failed to get supine Tc curvatures. " + patientPath)
+			doSup = False
+		try:
+			CurveFileToCurvaturesFile(curveSupDcPath)
+		except:
+			print("Failed to get supine Dc curvatures. " + patientPath)
+			doSup = False
+	if doLeftDown:
+		try:
+			CurveFileToCurvaturesFile(curveLeftDownPath)
+		except:
+			print("Failed to get left down curvatures. " + patientPath)
+			doLeftDown = False
+	
+	
+	
+	
+	
+	
 #direc = "C:\Users\jlaframboise\ColonCurves_JL\CtVolumes"
 #patientIdList = ['PTAF0056','PTAJ0023', 'PTAJ0095', 'PTAM0029', 'PTAP0049', 'PTAT0093', 'PTBB0002', 'PTBB0024', 'PTBC0016', 'PTBC0017', 'PTBD0033', 'PTBG0026' ]		
 #patientIdList = ['PTAJ0095', 'PTAM0029', 'PTAP0049', 'PTAT0093', 'PTBB0002', 'PTBB0024', 'PTBC0016', 'PTBC0017', 'PTBD0033', 'PTBG0026' ]		
