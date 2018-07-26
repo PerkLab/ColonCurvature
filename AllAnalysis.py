@@ -1,5 +1,5 @@
 #####Centerpoints from file-------------------------------------------------------
-	
+import numpy as np
 	
 def centerPointsFromFile(patPath, mode):
 	print('Connected')
@@ -225,9 +225,27 @@ for x in idList:
 
 ####### run all processing:
 
+def saveCutPointsFile(patPath):
+	supInPath = patPath + '\\' + patPath[-8:] + '_SupCutPoints.fcsv'
+	proInPath = patPath + '\\' + patPath[-8:] + '_ProCutPoints.fcsv'
+	supOutPath = supInPath[:-5]+'.txt'
+	proOutPath = proInPath[:-5]+'.txt'
+	[success, supCutPoints] = slicer.util.loadMarkupsFiducialList(supInPath, returnNode=True)
+	fOut = open(supOutPath, 'w')
+	for x in range(2):
+		pos = np.zeros(3)
+		supCutPoints.GetNthFiducialPosition(x, pos)
+		fOut.write(pos)
+	fOut.close()
+	[success, proCutPoints] = slicer.util.loadMarkupsFiducialList(proInPath, returnNode=True)
+	fOut = open(proOutPath, 'w')
+	for x in range(2):
+		pos = np.zeros(3)
+		proCutPoints.GetNthFiducialPosition(x, pos)
+		fOut.write('{},{},{}\n'.format(pos[0], pos[1], pos[2]))
+	fOut.close()
 
-
-
+#saveCutPointsFile(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013")
 
 def analyzePatient(patientPath, modeList = ['sup', 'pro']):
 	'''A function to analyze a patients prone and suppine ct scan segmentations. It will use extract skeleton to get centerpoints, 
@@ -462,9 +480,69 @@ def analyzeFromSplitCenterPoints(patientPath, modeList = ['sup', 'pro']):
 			doLeftDown = False
 	
 	
+def analyzeFromCenterPoints(patientPath, modeList = ['sup', 'pro']):
+	doPro, doSup, doLeftDown = False, False, False
+	
+	if 'pro' in modeList:
+		doPro = True
+	if 'sup' in modeList:
+		doSup = True
+	if 'ld' in modeList:
+		doLeftDown = True
+		
+	cpSupPath = patientPath+ "\\" + patientPath[-8:] + "_SupCenterPoints.fcsv"
+	cpProPath = patientPath+ "\\" + patientPath[-8:] + "_ProCenterPoints.fcsv"
+	cpLeftDownPath = patientPath+ "\\" + patientPath[-8:] + "_LeftDownCenterPoints.fcsv"
 	
 	
+	if doPro:
+		try:
+			MarkupFileToModelFile(cpProPath)
+		except:
+			print("Failed to get prone curve. " + patientPath)
+			doPro = False
+	if doSup:
+		try:
+			MarkupFileToModelFile(cpSupPath)
+		except:
+			print("Failed to get supine curve. " + patientPath)
+			doSup = False
+	if doLeftDown:
+		try:
+			MarkupFileToModelFile(cpLeftDownPath)
+		except:
+			print("Failed to get left down curve. " + patientPath)
+			doLeftDown = False
 	
+	curveSupPath = patientPath+ "\\" + patientPath[-8:] + "_SupCurve.vtk"
+	curveProPath = patientPath+ "\\" + patientPath[-8:] + "_ProCurve.vtk"
+	curveLeftDownPath = patientPath+ "\\" + patientPath[-8:] + "_LeftDownCurve.vtk"
+	
+	
+	#try to get the curvature data for both positions
+	if doPro:
+		try:
+			CurveFileToCurvaturesFile(curveProPath)
+		except:
+			print("Failed to get prone curvatures. " + patientPath)
+			doPro = False
+	if doSup:
+		try:
+			CurveFileToCurvaturesFile(curveSupPath)
+		except:
+			print("Failed to get supine curvatures. " + patientPath)
+			doSup = False
+	if doLeftDown:
+		try:
+			CurveFileToCurvaturesFile(curveLeftDownPath)
+		except:
+			print("Failed to get left down curvatures. " + patientPath)
+			doLeftDown = False
+			
+			
+			
+			
+			
 	
 #direc = "C:\Users\jlaframboise\ColonCurves_JL\CtVolumes"
 #patientIdList = ['PTAF0056','PTAJ0023', 'PTAJ0095', 'PTAM0029', 'PTAP0049', 'PTAT0093', 'PTBB0002', 'PTBB0024', 'PTBC0016', 'PTBC0017', 'PTBD0033', 'PTBG0026' ]		
