@@ -357,7 +357,7 @@ pathOne = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TE
 pathTwo = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\Current\Curvatures.txt"
 pathThree = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_ProCurvatures.txt"
 pathLD = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_LeftDownCurvatures.txt"
-doAllProcessing(pathOne, 0, 0, 1, 1.5)
+#doAllProcessing(pathOne, 0, 0, 1, 1.5)
 
 #addDetails(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvatures.txt", r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesData.txt")
 

@@ -97,7 +97,7 @@ def splitCenterPointsFileToFiles(cenPointsInPath):
 	
 	
 	
-splitCenterPointsFileToFiles(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCenterPoints.fcsv")
+#splitCenterPointsFileToFiles(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCenterPoints.fcsv")
 	
 	
 	

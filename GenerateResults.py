@@ -250,10 +250,10 @@ def compareSupineProne(patPath):
 	
 	fOut.close()
 	
-getStats(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesData.txt")
-getStats(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_ProCurvaturesData.txt")
+#getStats(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesData.txt")
+#getStats(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_ProCurvaturesData.txt")
 	
-compareSupineProne(r'C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012')
+#compareSupineProne(r'C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012')
 	
 	
 #getStats(r
