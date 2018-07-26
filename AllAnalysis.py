@@ -119,6 +119,7 @@ def doMarkupsToModel(markups):
 	markupsToModelNode.SetPolynomialOrder(2)
 	markupsToModelNode.SetPolynomialSampleWidth(0.05)
 	markupsToModelNode.SetTubeRadius(0)
+	#outputCurve.Update()
 	
 	return outputCurve
 	
@@ -350,17 +351,17 @@ def analyzeFromSplitCenterPoints(patientPath, modeList = ['sup', 'pro']):
 			print("Failed to get prone curve. " + patientPath)
 			doPro = False
 		try:
-			MarkupFileToModelFile(cpProAcPath)
+			MarkupFileToModelFile(cpAcProPath)
 		except:
 			print("Failed to get prone Ac curve. " + patientPath)
 			doPro = False
 		try:
-			MarkupFileToModelFile(cpProTcPath)
+			MarkupFileToModelFile(cpTcProPath)
 		except:
 			print("Failed to get prone Tc curve. " + patientPath)
 			doPro = False
 		try:
-			MarkupFileToModelFile(cpProDcPath)
+			MarkupFileToModelFile(cpDcProPath)
 		except:
 			print("Failed to get prone Dc curve. " + patientPath)
 			doPro = False
@@ -371,17 +372,17 @@ def analyzeFromSplitCenterPoints(patientPath, modeList = ['sup', 'pro']):
 			print("Failed to get supine curve. " + patientPath)
 			doSup = False
 		try:
-			MarkupFileToModelFile(cpSupAcPath)
+			MarkupFileToModelFile(cpAcSupPath)
 		except:
 			print("Failed to get supine Ac curve. " + patientPath)
 			doSup = False
 		try:
-			MarkupFileToModelFile(cpSupTcPath)
+			MarkupFileToModelFile(cpTcSupPath)
 		except:
 			print("Failed to get supine Tc curve. " + patientPath)
 			doSup = False
 		try:
-			MarkupFileToModelFile(cpSupDcPath)
+			MarkupFileToModelFile(cpDcSupPath)
 		except:
 			print("Failed to get supine Dc curve. " + patientPath)
 			doSup = False
