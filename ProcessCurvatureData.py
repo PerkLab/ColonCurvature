@@ -1,6 +1,7 @@
 import statistics as stat
 from operator import itemgetter
 import numpy as np
+import os
 
 def addDetails(inPath, outputPath):
 	'''A function that takes the path of a text file and creates a new text file with the point number,
@@ -335,6 +336,140 @@ def addDegreeChangesToFile(inPath):
 		fOut.write(line + '\n')
 	fOut.close()
 
+
+	
+	
+def splitDataFileToFiles(inDataPath, inCutPointsPath):
+	'''A function to take a data file, and a file containing the coords of two fiducials
+	representing the cut points, first being ascending and second being descending, 
+	and create three new data files as the result of splitting the large data file at
+	the two cut points. '''
+	
+	fIn = open(inDataPath, 'r')
+	lines = fIn.readlines()
+	fIn.close()
+	title = lines[0].strip()
+	lines2 = lines[1:]
+	numVals = [x.strip().split(', ')[0] for x in lines[1:]]
+	maxMinTypes = [x.strip().split(', ')[7] for x in lines[1:]]
+	coords = [(x.strip().split(', ')[2], x.strip().split(', ')[3], x.strip().split(', ')[4]) for x in lines[1:]]
+	
+	fIn = open(inCutPointsPath, 'r')
+	cutPointOne = fIn.readline().strip().split(',')
+	cutPointTwo = fIn.readline().strip().split(',')
+	fIn.close()
+	
+	outAcDataPath = inDataPath[:-8] + 'AcData.txt'
+	outTcDataPath = inDataPath[:-8] + 'TcData.txt'
+	outDcDataPath = inDataPath[:-8] + 'DcData.txt'
+	
+	
+	cutPointOne = np.array([float(x) for x in cutPointOne])
+	cutPointTwo = np.array([float(x) for x in cutPointTwo])
+	
+	
+	minDist = 1000000
+	closestPointNum=None
+	for x in range(len(coords)):
+		pos = np.array([float(coords[x][0]), float(coords[x][1]), float(coords[x][2])])
+		
+		cutPointToCenterPoint = np.subtract(pos, cutPointOne)
+		dist = np.linalg.norm(cutPointToCenterPoint)
+		if dist < minDist:
+			closestPointNum = x
+			minDist = dist
+	closestPointNumToCutOne = closestPointNum
+	
+	minDist = 1000000
+	closestPointNum=None
+	for x in range(len(coords)):
+		pos = np.array([float(coords[x][0]), float(coords[x][1]), float(coords[x][2])])
+		
+		cutPointToCenterPoint = np.subtract(pos, cutPointTwo)
+		dist = np.linalg.norm(cutPointToCenterPoint)
+		if dist < minDist:
+			closestPointNum = x
+			minDist = dist
+	closestPointNumToCutTwo = closestPointNum
+	
+	ascendingLines = lines2[:closestPointNumToCutOne]
+	transverseLines = lines2[closestPointNumToCutOne:closestPointNumToCutTwo]
+	descendingLines = lines2[closestPointNumToCutTwo:]
+	
+	#REVERSE data file if it is backwards
+	if not transverseLines:
+		lines2 = lines2[::-1]
+		numVals = [x.strip().split(', ')[0] for x in lines2[1:]]
+		maxMinTypes = [x.strip().split(', ')[7] for x in lines2[1:]]
+		coords = [(x.strip().split(', ')[2], x.strip().split(', ')[3], x.strip().split(', ')[4]) for x in lines2[1:]]
+	
+		minDist = 1000000
+		closestPointNum=None
+		for x in range(len(coords)):
+			pos = np.array([float(coords[x][0]), float(coords[x][1]), float(coords[x][2])])
+		
+			cutPointToCenterPoint = np.subtract(pos, cutPointOne)
+			dist = np.linalg.norm(cutPointToCenterPoint)
+			if dist < minDist:
+				closestPointNum = x
+				minDist = dist
+		closestPointNumToCutOne = closestPointNum
+		
+		minDist = 1000000
+		closestPointNum=None
+		for x in range(len(coords)):
+			pos = np.array([float(coords[x][0]), float(coords[x][1]), float(coords[x][2])])
+		
+			cutPointToCenterPoint = np.subtract(pos, cutPointTwo)
+			dist = np.linalg.norm(cutPointToCenterPoint)
+			if dist < minDist:
+				closestPointNum = x
+				minDist = dist
+		closestPointNumToCutTwo = closestPointNum
+		
+		ascendingLines = lines2[:closestPointNumToCutOne]
+		transverseLines = lines2[closestPointNumToCutOne:closestPointNumToCutTwo]
+		descendingLines = lines2[closestPointNumToCutTwo:]
+	
+	
+	acOut = open(outAcDataPath, 'w')
+	acOut.write(title +'\n')
+	for line in ascendingLines:
+		acOut.write(line)
+	acOut.close()
+	
+	tcOut = open(outTcDataPath, 'w')
+	tcOut.write(title +'\n')
+	for line in transverseLines:
+		tcOut.write(line)
+	tcOut.close()
+	
+	dcOut = open(outDcDataPath, 'w')
+	dcOut.write(title +'\n')
+	for line in descendingLines:
+		dcOut.write(line)
+	dcOut.close()
+	
+	
+	
+def splitPatientDataFilesToFiles(patPath):
+	'''A fucntion to call the split data set function for a patient's data files. '''
+	supDataPath = os.path.join(patPath, patPath[-8:]+'_SupCurvaturesData.txt')
+	proDataPath = os.path.join(patPath, patPath[-8:]+'_ProCurvaturesData.txt')
+	
+	supCutPath = os.path.join(patPath, patPath[-8:]+'_SupCutPoints.txt')
+	proCutPath = os.path.join(patPath, patPath[-8:]+'_ProCutPoints.txt')
+	
+	splitDataFileToFiles(supDataPath, supCutPath)
+	splitDataFileToFiles(proDataPath, proCutPath)
+	
+	
+
+#splitDataFileToFiles(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013\TEST0013_SupCurvaturesData.txt", r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013\TEST0013_SupCutPoints.txt")
+	
+	
+	
+	
 	
 
 def doAllProcessing(inPath, sumSampleWidth = 0, minMaxPointDist = 0, threshold = 1, minThresholdBoost = 1.5):

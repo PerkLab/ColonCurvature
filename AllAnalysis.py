@@ -230,12 +230,13 @@ def saveCutPointsFile(patPath):
 	proInPath = patPath + '\\' + patPath[-8:] + '_ProCutPoints.fcsv'
 	supOutPath = supInPath[:-5]+'.txt'
 	proOutPath = proInPath[:-5]+'.txt'
+	
 	[success, supCutPoints] = slicer.util.loadMarkupsFiducialList(supInPath, returnNode=True)
 	fOut = open(supOutPath, 'w')
 	for x in range(2):
 		pos = np.zeros(3)
 		supCutPoints.GetNthFiducialPosition(x, pos)
-		fOut.write(pos)
+		fOut.write('{},{},{}\n'.format(pos[0], pos[1], pos[2]))
 	fOut.close()
 	[success, proCutPoints] = slicer.util.loadMarkupsFiducialList(proInPath, returnNode=True)
 	fOut = open(proOutPath, 'w')
@@ -481,6 +482,7 @@ def analyzeFromSplitCenterPoints(patientPath, modeList = ['sup', 'pro']):
 	
 	
 def analyzeFromCenterPoints(patientPath, modeList = ['sup', 'pro']):
+
 	doPro, doSup, doLeftDown = False, False, False
 	
 	if 'pro' in modeList:

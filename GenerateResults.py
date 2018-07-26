@@ -16,7 +16,8 @@ def getStats(dataInPath):
 	
 	meanCuvature = stat.mean(curvatureValues)
 	medianCurvature = stat.median(curvatureValues)
-	modeCurvature = stat.mode(curvatureValues)
+	#modeCurvature = stat.mode(curvatureValues)
+	#print(curvatureValues)
 	stanDevCurvature = stat.pstdev(curvatureValues)
 	varianceCurvature = stat.pvariance(curvatureValues)
 	totalCurvature = sum(curvatureValues)
@@ -136,7 +137,7 @@ def getStats(dataInPath):
 	linesOut = []
 	linesOut.append('Mean Curvature, {}'.format(meanCuvature))
 	linesOut.append('Median Curvature, {}'.format(medianCurvature))
-	linesOut.append('Mode Curvature, {}'.format(modeCurvature))
+	#linesOut.append('Mode Curvature, {}'.format(modeCurvature))
 	linesOut.append('Total Curvature, {}'.format(totalCurvature))
 	linesOut.append('Standard Dev of Curvature, {}'.format(stanDevCurvature))
 	linesOut.append('Variance of Curvature, {}'.format(varianceCurvature))
@@ -226,17 +227,17 @@ def compareSupineProne(patPath):
 	outLines.append('{},Supine,Prone'.format(patId))
 	#outLines.append('{},{},{}'.format('Mean Curvatures', supLines[0].strip().split(', ')[1], supLines[0].strip(', ').split()[1]))
 	
-	for y in range(0,6):
+	for y in range(0,5):
 		outLines.append('{},{},{}'.format(supLines[y].strip().split(', ')[0], supLines[y].strip().split(', ')[1], proLines[y].strip().split(', ')[1]))
 	
 	outLines.append(supLines[6].strip())
 	
-	for y in range(7,12):
+	for y in range(6,11):
 		outLines.append('{},{},{}'.format(supLines[y].strip().split(', ')[0], supLines[y].strip().split(', ')[1], proLines[y].strip().split(', ')[1]))
 	
-	outLines.append(supLines[12].strip())
+	outLines.append(supLines[11].strip())
 
-	for y in range(13, 38, 3):
+	for y in range(12, 37, 3):
 		outLines.append('{},{},{}'.format(supLines[y].strip().split(', ')[0], supLines[y].strip().split(', ')[1], proLines[y].strip().split(', ')[1]))
 		outLines.append('{},{},{}'.format(supLines[y+1].strip().split(', ')[0], supLines[y+1].strip().split(', ')[1], proLines[y+1].strip().split(', ')[1]))
 	
