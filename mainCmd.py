@@ -4,7 +4,8 @@ from ProcessCurvatureData import *
 from GenerateResults import *
 
 def doAllAfterCenterPointsCMD(patPath):
-	
+	'''The function that should be run through command prompt through python 3, will do all the worl
+	after slicer's functionality is not needed. '''
 	
 	
 	patId = patPath[-8:]
@@ -48,7 +49,7 @@ def doAllAfterCenterPointsCMD(patPath):
 	
 	
 	
-patPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013"
+patPath = r"C:\Users\jaker\Documents\ColonCurves_JL\CtVolumes\TEST0013"
 
 doAllAfterCenterPointsCMD(patPath)
 

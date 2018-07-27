@@ -1,10 +1,13 @@
+'''This file runs through slicer, and does the first portion of the work, as
+slicer is needed for this. '''
+
 import os
 
-patPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013"
+patPath = r"C:\Users\jaker\Documents\ColonCurves_JL\CtVolumes\TEST0013"
 
-execfile(r"C:\Users\jlaframboise\Documents\ColonCurvature\AllAnalysis.py")
+execfile(r"C:\Users\jaker\Documents\ColonCurvature\AllAnalysis.py")
 
-execfile(r"C:\Users\jlaframboise\Documents\ColonCurvature\SplitSegments.py")
+execfile(r"C:\Users\jaker\Documents\ColonCurvature\SplitSegments.py")
 
 patId = patPath[-8:]
 

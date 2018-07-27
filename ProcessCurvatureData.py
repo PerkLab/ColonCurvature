@@ -283,7 +283,10 @@ def angleBetween(v1,v2):
 	v2U = unitVector(v2)
 	return np.arccos(np.clip(np.dot(v1U, v2U), -1.0, 1.0))
 
-def addDegreeChangesToFile(inPath):
+def addDegreeChangesToFile1(inPath):
+	'''A function to look at every max, and make a sublist of the mins on either side.
+	it then takes the vector from min1 to max, and from max to min1, and compares them,
+	to find the angle change of the curve over a distance of the vector min to min. '''
 	fIn = open(inPath, 'r')
 	lines = fIn.readlines()
 	fIn.close()
@@ -337,6 +340,69 @@ def addDegreeChangesToFile(inPath):
 	fOut.close()
 
 
+	
+def addDegreeChangesToFile(inPath):
+	'''This function look at every max, and makes a sublist of itself, and the minimums on either side. 
+	it then akes a tangent at each minimum, and compares the change in angle from one to the other,
+	saying that the line curves that x degrees over the straight line distance from Min to Min. '''
+	fIn = open(inPath, 'r')
+	lines = fIn.readlines()
+	fIn.close()
+	title = lines[0].strip()
+	curvatureValues = [x.strip().split(', ')[5] for x in lines[1:]]
+	numVals = [x.strip().split(', ')[0] for x in lines[1:]]
+	maxMinTypes = [x.strip().split(', ')[7] for x in lines[1:]]
+	coords = [(x.strip().split(', ')[2], x.strip().split(', ')[3], x.strip().split(', ')[4]) for x in lines[1:]]
+	
+	extremePoints = []
+	maxPlaces = []
+	for y in range(len(lines)-1):
+		if maxMinTypes[y] == 'MAX' or maxMinTypes[y] == 'MIN':
+			extremePoints.append((coords[y][0], coords[y][1], coords[y][2], maxMinTypes[y], numVals[y]))
+			
+	angleChangeList = []
+	for x in range(1, len(extremePoints)-1):
+		subList = [extremePoints[x-1], extremePoints[x], extremePoints[x+1]]
+		
+		if subList[1][3] =='MAX':
+			leftMinForwardPointNum = int(subList[0][4])+2
+			rightMinBackwardPointNum = int(subList[2][4])-2
+			leftMinForwardPointCoords = np.array([float(coords[leftMinForwardPointNum][0]), float(coords[leftMinForwardPointNum][1]), float(coords[leftMinForwardPointNum][2])])
+			rightMinBackwardPointCoords = np.array([float(coords[rightMinBackwardPointNum][0]), float(coords[rightMinBackwardPointNum][1]), float(coords[rightMinBackwardPointNum][2])])
+			
+			vecPosList = [np.array([float(z[0]), float(z[1]), float(z[2])]) for z in subList]
+			
+			vecOne = leftMinForwardPointCoords - vecPosList[0]
+			vecTwo = vecPosList[2] - rightMinBackwardPointCoords
+			
+			vecThree = vecPosList[2] - vecPosList[0]
+			angleChange = angleBetween(vecOne, vecTwo) * 180 / np.pi 
+			straightDist = np.linalg.norm(vecThree)
+			
+			angleChangeList.append((subList[1][4], angleChange, straightDist))
+	
+	#print(angleChangeList)
+	angleChangeValues = []
+	straightDistValues = []
+	numList = [int(x[0]) for x in angleChangeList]
+	for i in range(len(lines)-1):
+		if i in numList:
+			for x in angleChangeList:
+				if int(x[0]) == i:
+					angleChangeValues.append(x[1])
+					straightDistValues.append(x[2])
+		else:
+			angleChangeValues.append('0')
+			straightDistValues.append('0')
+			
+	
+			
+	
+	newLines = [title] + [lines[x].strip() + ', '  + str(angleChangeValues[x-1]) + ', '  + str(straightDistValues[x-1]) for x in range(1, len(angleChangeValues)+1)]
+	fOut = open(inPath, 'w')
+	for line in newLines:
+		fOut.write(line + '\n')
+	fOut.close()
 	
 	
 def splitDataFileToFiles(inDataPath, inCutPointsPath):
@@ -494,16 +560,7 @@ pathThree = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\
 pathLD = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_LeftDownCurvatures.txt"
 #doAllProcessing(pathOne, 0, 0, 1, 1.5)
 
-#addDetails(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvatures.txt", r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesData.txt")
-
-#addSumCurvatureMaximumsToDataFile(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_SupCurvaturesData.txt")
 	
-#The following 5 lines of code will create a combined data file for each patient with all their scans. 
-#idList = ['PTAF0056', 'PTAJ0023', 'PTAJ0095', 'PTAM0029', 'PTAP0049', 'PTAT0093', 'PTBB0002', 'PTBB0024', 'PTBC0016', 'PTBC0017', 'PTBD0033', 'PTBG0026', 'TEST0012']
-#directory = r'C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\\' 
-#for id in idList:
-	#patPath = directory + id
-	#combinePatientDataFiles(patPath)
 		
 		
 
@@ -528,19 +585,4 @@ outFilePath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\AllData
 
 allFilesList = supFilesList + proFilesList + leftDownFilesList
 
-#print(allFilesList)
-#combineDataFiles(allFilesList, outFilePath)
 
-
-
-#addDetailsStackMany(supFilesList, r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\AllSupDataStacked.txt")
-		
-
-#The following 6 lines create more detailed data files for all the patients:
-#idList = ['PTAF0056', 'PTAJ0023', 'PTAJ0095', 'PTAM0029', 'PTAP0049', 'PTAT0093', 'PTBB0002', 'PTBB0024', 'PTBC0016', 'PTBC0017', 'PTBD0033', 'PTBG0026', 'TEST0012']
-#fileListPro = ["C:\\Users\\jlaframboise\\Documents\\ColonCurves_JL\CtVolumes\\" + id + "\\" + id + "_ProCurvatures.txt" for id in idList]
-#fileListSup = ["C:\\Users\\jlaframboise\\Documents\\ColonCurves_JL\CtVolumes\\" + id + "\\" + id + "_SupCurvatures.txt" for id in idList]
-#fileListLeftDown = ["C:\\Users\\jlaframboise\\Documents\\ColonCurves_JL\CtVolumes\\" + id + "\\" + id + "_LeftDownCurvatures.txt" for id in idList]
-#addManyDetails(fileListPro)
-#addManyDetails(fileListSup)
-#addManyDetails(fileListLeftDown)

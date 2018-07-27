@@ -2,6 +2,8 @@
 import numpy as np
 	
 def centerPointsFromFile(patPath, mode):
+	'''A function to use the extract skeleton cli module in slicer to get the supine or prone
+	centerpoints of the segmentation'''
 	print('Connected')
 	
 	#get patient id and make possible paths
@@ -101,6 +103,8 @@ def centerPointsFromFile(patPath, mode):
 
 #function to return a curve model from fiducial list node
 def doMarkupsToModel(markups):
+	'''A function to return a curve model from a fiducial list node
+	with specific parameters for this project. '''
 	markupsToModelNode = slicer.vtkMRMLMarkupsToModelNode()
 	markupsToModelNode.SetName('MyMarkupsToModelNode')
 	slicer.mrmlScene.AddNode(markupsToModelNode)
@@ -126,6 +130,7 @@ def doMarkupsToModel(markups):
 	
 #function to apply curve gen to file path, output to new file in same directory
 def MarkupFileToModelFile(inPath):
+	'''A function to apply the markuptomodel function to a file'''
 	outPath = inPath[:-17]+'Curve.vtk'
 	print(outPath)
 	[success, markups] = slicer.util.loadMarkupsFiducialList(inPath, returnNode=True)
@@ -163,7 +168,7 @@ for x in idList:
 
 #a function to open a vtk curve in slicer, use curvemaker to find curvatures, and save them to text files
 def CurveFileToCurvaturesFile(inPath):
-	
+	'''A function to return the curvature on every point on a curve model and save it to a text file. '''
 	[success, n] = slicer.util.loadModel(inPath, returnNode = True)
 	#print(n)
 	#n = slicer.util.getFirstNodeByName(inPath[-17:])
@@ -226,6 +231,7 @@ for x in idList:
 ####### run all processing:
 
 def saveCutPointsFile(patPath):
+	'''A function to open fiducial files and save them as text files for use later to split the processd data.'''
 	supInPath = patPath + '\\' + patPath[-8:] + '_SupCutPoints.fcsv'
 	proInPath = patPath + '\\' + patPath[-8:] + '_ProCutPoints.fcsv'
 	supOutPath = supInPath[:-5]+'.txt'
@@ -339,6 +345,11 @@ def analyzePatient(patientPath, modeList = ['sup', 'pro']):
 			
 			
 def analyzeFromSplitCenterPoints(patientPath, modeList = ['sup', 'pro']):
+	'''This function is replaced by the one below. Not used. 
+	A function to analyze a patients prone and suppine ct scan segmentations from the point after centerline computation, and after cut points
+	have been made.	It will split the centerpoint files into the different section of colons first. 
+	It will use markups to model to get the curve model, and will use computeCurvatures() function from Curve Maker to get curvature data.
+	One input is needed: patient's data folder, and all outputs are into files in that same folder. Will display errors in the console. '''
 	doPro, doSup, doLeftDown = False, False, False
 	
 	if 'pro' in modeList:
@@ -482,7 +493,10 @@ def analyzeFromSplitCenterPoints(patientPath, modeList = ['sup', 'pro']):
 	
 	
 def analyzeFromCenterPoints(patientPath, modeList = ['sup', 'pro']):
-
+	'''	A function to analyze a patients prone and suppine ct scan segmentations from the point after centerline computation, and after cut points
+	have been made.	It will split the centerpoint files into the different section of colons first. 
+	It will use markups to model to get the curve model, and will use computeCurvatures() function from Curve Maker to get curvature data.
+	One input is needed: patient's data folder, and all outputs are into files in that same folder. Will display errors in the console. '''
 	doPro, doSup, doLeftDown = False, False, False
 	
 	if 'pro' in modeList:
@@ -546,24 +560,6 @@ def analyzeFromCenterPoints(patientPath, modeList = ['sup', 'pro']):
 			
 			
 	
-#direc = "C:\Users\jlaframboise\ColonCurves_JL\CtVolumes"
-#patientIdList = ['PTAF0056','PTAJ0023', 'PTAJ0095', 'PTAM0029', 'PTAP0049', 'PTAT0093', 'PTBB0002', 'PTBB0024', 'PTBC0016', 'PTBC0017', 'PTBD0033', 'PTBG0026' ]		
-#patientIdList = ['PTAJ0095', 'PTAM0029', 'PTAP0049', 'PTAT0093', 'PTBB0002', 'PTBB0024', 'PTBC0016', 'PTBC0017', 'PTBD0033', 'PTBG0026' ]		
-
-
-
-
-#for x in patientIdList:
-	#analyzePatient(direc + "\\" + x)
-	
-	
-
-#do it
-#analyzePatient("C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTAP0049", ['pro'])
-
-
-
-#CurveFileToCurvaturesFile(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_LeftDownCurve.vtk")
 
 
 
