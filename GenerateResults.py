@@ -417,7 +417,7 @@ def makeAverageLists(patientPathList):
 	
 	
 	
-def outputAverageListsToFile(textLines, allWholeDataList, allAcDataList, allTcDataList, allDcDataList)
+def outputAverageListsToOnePrintReadyList(textLines, allWholeDataList, allAcDataList, allTcDataList, allDcDataList):
 	outLines = []
 	
 	for x in range(len(allWholeDataList):
@@ -436,11 +436,18 @@ def outputAverageListsToFile(textLines, allWholeDataList, allAcDataList, allTcDa
 		line = '{},{},{}'.format(textLines[x+1], allDcDataList[x][0], allDcDataList[x][1])
 		outLines.append(line)
 	
+	return outLines
 	
 	
+def doFinalAverageComparison(patientPathList, outputPath):
+	textLines, allWholeDataList, allAcDataList, allTcDataList, allDcDataList = makeAverageLists(patientPathList)
 	
+	toPrintList = outputAverageListsToOnePrintReadyList(textLines, allWholeDataList, allAcDataList, allTcDataList, allDcDataList)
 	
-	
+	fOut = open(outputPath, 'w')
+	for x in toPrintList:
+		fOut.write(x+'\n')
+	fOut.close()
 	
 	
 	
