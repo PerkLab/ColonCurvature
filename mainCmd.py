@@ -49,11 +49,30 @@ def doAllAfterCenterPointsCMD(patPath):
 	
 	
 	
-patPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013"
-patPath2 = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0014"
+#patPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013"
+#patPath2 = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0014"
 
 
-doAllAfterCenterPointsCMD(patPath2)
+
+pathList = [r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBD0033",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBG0026",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTAF0056",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTAJ0023",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTAM0029",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTAP0049",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTAT0093",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBB0002",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBC0017"]
+
+
+outPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\SampleOfpatients.txt"
+doFinalAverageComparison(pathList, outPath)
+
+#x = 0
+#for x in range(9):
+	#doAllAfterCenterPointsCMD(pathList[x])
+
+
 
 #splitPatientDataFilesToFiles(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013\TEST0013_SupCurvaturesData.txt", r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013\TEST0013_SupCutPoints.txt")
 

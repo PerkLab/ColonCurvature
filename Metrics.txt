@@ -1,0 +1,101 @@
+To evaluate curvature, I must be able to identify and count curves, but also understand their size/curvature
+I could look for max and min, and only allow them the exactly alternate max, min, max, min..
+move along each model point, if the lat appendided extreme point was max, loom for min
+
+for every point, take vectors 1 -> x units down and up the curve, and get angle between the vectors. 
+When the angle between the vectors reaches 60 degrees, saved the distance it needed to hit a 60deg diff. find the minimas of that set of data. 
+Thenrun again with a larger degree neededed. 
+for each minimum in dist needed to reach threshold, check if other minimums exist within that distance. elim one?
+
+
+smart cluster removal:
+for every point: 
+if point = max:
+check neighbors,
+place new max point between closest min neighbors
+
+if point = min:
+check neighbors,
+place new min point between closest max neighbors. 
+
+Could check to see if there is onyl 1 min between many max's, and remove that min?
+
+
+current problems:
+-long straight streches after a curve would make the curve seem to be curving
+over a longer distance than they are
+-large almost circular curves have multiple max/mins along the curve. 
+
+-I could check the avg curvature over the wole large curve, and see if the avg of the in/max points 
+is close enough to thaqt
+
+increased threshold for minimas, maybe that will fix many ponts along high radius curves
+
+-check clusters of curves(that are one big curve) and 
+see if the avg curvature of the cluster would connect the first and last min. 
+if so, replace the many max/mins with one curve. 
+
+might be better to take straight line distance betqween min points
+instead of distance along a line. 
+^done
+
+Need to test vs another file, to ensure that the script runs properly 
+when there is a min at the start vs a max at thestart
+
+Cureently works great, the only issue is when an area with two curves 
+has no area between that is less curvy, so a minimum is not placed and the
+maximum ends up in the middle of two curves. 
+
+!!!!! I could replace my measure of degrees with the difference in
+angle of the tangents of the two minimumsa. 
+
+Also currently, the acute angle of change is being recorded, need to get supplementary angle. 
+^nevermind, it should be correct. Angle between formula works tail to tail. 
+
+Working on a 
+
+
+
+
+
+get avg dist of a curve with x deg
+
+
+does when it loads the main file, does it also load a curve file by name?
+
+
+actually, it is probably better to just cut the end analysis into segments. 
+
+
+flow:
+segment, an dplace two cutpoint fids,
+Run all Analysis, 
+In allanalysis, save a text file with the RAS coords of the cutPoints,
+processCurvatureData,
+GenerateResults, 
+make function in GenResults that generates Ac, Tc, Dc results bysplitting curvatures data file by 
+cutpoints file. 
+
+
+
+got cutpoints for:
+PTAF0056,
+PTAJ0023
+
+PTAJ0095 not done bad sup
+
+PTAP0049
+PTAM0029
+PTAT0093
+PTBB0002
+
+PTBB0024 not done bc rectum wrong side
+PTBB0016 not done bc leftdown
+
+PTBC0017
+PTBD0033
+PTBG0026
+
+https://www.graphpad.com/quickcalcs/ttest2/
+
+

@@ -467,10 +467,10 @@ def doFinalAverageComparison(patientPathList, outputPath):
 	fOut.close()
 	
 
-patPathList = [r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013",
-r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0014"]
-outPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\SampleOfpatients.txt"
-doFinalAverageComparison(patPathList, outPath)
+#patPathList = [r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013",
+#r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0014"]
+#outPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\SampleOfpatients.txt"
+#doFinalAverageComparison(patPathList, outPath)
 	
 
 	

@@ -65,11 +65,12 @@ def generateCurve():
 pathLD = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_LeftDownCurvaturesData.txt"
 
 
-addFiducialsOnCurvatureMaximums(pathLD)
-addFiducialsOnCurvatureMinimums(pathLD)
+#addFiducialsOnCurvatureMaximums(pathLD)
+#addFiducialsOnCurvatureMinimums(pathLD)
 
 
-
+addFiducialsOnCurvatureMaximums(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBB0002\PTBB0002_SupCurvaturesData.txt")
+addFiducialsOnCurvatureMinimums(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBB0002\PTBB0002_SupCurvaturesData.txt")
 
 
 
