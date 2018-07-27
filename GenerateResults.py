@@ -317,6 +317,106 @@ def comparePatientResults(patPath):
 	
 	
 	
+class Patient():
+
+	def __init__(self, path):
+		self.patPath = path
+		self.patId = self.patPath[-8:]
+		self.completeDataFilePath = os.path.join(self.patPath, self.patId + '_PatientCurvatureComparison.txt')
+		self.loadData()
+		
+		print(self.supMedianCurvature)
+		
+	def loadData(self):
+		fIn = open(self.completeDataFilePath, 'r')
+		self.lines = [x.strip() for x in fIn.readlines()]
+		fIn.close()
+		
+		self.supMeanCurvature, self.supMedianCurvature, self.supTotalCurvature, self.supStanDevCurvature, self.supVarCurvature = [float(x.split(',')[1]) for x in self.lines[1:6]]
+		self.proMeanCurvature, self.proMedianCurvature, self.proTotalCurvature, self.proStanDevCurvature, self.proVarCurvature = [float(x.split(',')[2]) for x in self.lines[1:6]]
+
+		self.supNumberOfCurves, self.supNumberOfPoints, self.supMeanDegreesOfCurve, self.supMedianDegreesOfCurve, self.supMeanDistanceOfCurve, self.supMedianDistanceOfCurve = [float(x.split(',')[1]) for x in self.lines[7:13]]
+		self.proNumberOfCurves, self.proNumberOfPoints, self.proMeanDegreesOfCurve, self.proMedianDegreesOfCurve, self.proMeanDistanceOfCurve, self.proMedianDistanceOfCurve = [float(x.split(',')[2]) for x in self.lines[7:13]]
+
+		
+		self.supNumberOfCurvesPerInterval = [int(x.split(',')[1]) for x in self.lines[14:31:2]]
+		self.proNumberOfCurvesPerInterval = [int(x.split(',')[2]) for x in self.lines[14:31:2]]
+
+
+	
+	
+class Patient():
+	def __init__(self, path):
+		self.patPath = path
+		self.patId = self.patPath[-8:]
+		self.completeDataFilePath = os.path.join(self.patPath, self.patId + '_PatientCurvatureComparison.txt')
+		self.loadData()
+		
+	def loadData(self):
+		fIn = open(self.completeDataFilePath, 'r')
+		self.lines = [x.strip() for x in fIn.readlines()]
+		fIn.close()
+		
+		self.wholeData = []
+		for x in self.lines[0:32]:
+			try:
+				self.wholeData.append((float(x.split(',')[1]), float(x.split(',')[2])))
+			except:
+				7*2
+				pass
+		
+		self.acData = []
+		for x in self.lines[33:65]:
+			try:
+				self.acData.append((float(x.split(',')[1]), float(x.split(',')[2])))
+			except:
+				7*2
+				pass
+				
+		self.tcData = []
+		for x in self.lines[66:98]:
+			try:
+				self.tcData.append((float(x.split(',')[1]), float(x.split(',')[2])))
+			except:
+				7*2
+				pass
+		
+		self.dcData = []
+		for x in self.lines[99:131]:
+			try:
+				self.dcData.append((float(x.split(',')[1]), float(x.split(',')[2])))
+			except:
+				7*2
+				pass
+				
+	
+	
+	
+p = Patient(r"C:\Users\jaker\Documents\ColonCurves_JL\CtVolumes\TEST0013")
+
+def makeAverageList(patientPathList):
+	patientList = [Patient(x) for x in patientPathList]
+	
+	allDataList = []
+	
+	for x in range(len(patientList[0].wholeData)):
+		supList = [patient.wholeData[x][0] for patient in patientList]
+		proList = [patient.wholeData[x][1] for patient in patientList]
+		supMean = stat.mean(supList)
+		proMean = stat.mean(proList)
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
