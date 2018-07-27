@@ -369,11 +369,13 @@ class Patient():
 	
 	
 	
-p = Patient(r"C:\Users\jaker\Documents\ColonCurves_JL\CtVolumes\TEST0013")
+#p = Patient(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013")
+
+
 
 def makeAverageLists(patientPathList):
 	patientList = [Patient(x) for x in patientPathList]
-	
+	idList = [patient.patId for patient in patientList]
 	
 	textList = patientList[0].textLines
 	
@@ -384,7 +386,8 @@ def makeAverageLists(patientPathList):
 		proList = [patient.wholeData[x][1] for patient in patientList]
 		supMean = stat.mean(supList)
 		proMean = stat.mean(proList)
-	allWholeDataList.append((supMean, proMean))
+		#print((supMean, proMean))
+		allWholeDataList.append((supMean, proMean))
 	
 	allAcDataList = []
 	
@@ -393,7 +396,7 @@ def makeAverageLists(patientPathList):
 		proList = [patient.acData[x][1] for patient in patientList]
 		supMean = stat.mean(supList)
 		proMean = stat.mean(proList)
-	allAcDataList.append((supMean, proMean))
+		allAcDataList.append((supMean, proMean))
 	
 	allTcDataList = []
 	
@@ -402,7 +405,7 @@ def makeAverageLists(patientPathList):
 		proList = [patient.tcData[x][1] for patient in patientList]
 		supMean = stat.mean(supList)
 		proMean = stat.mean(proList)
-	allTcDataList.append((supMean, proMean))
+		allTcDataList.append((supMean, proMean))
 	
 	allDcDataList = []
 	
@@ -411,28 +414,38 @@ def makeAverageLists(patientPathList):
 		proList = [patient.dcData[x][1] for patient in patientList]
 		supMean = stat.mean(supList)
 		proMean = stat.mean(proList)
-	allDcDataList.append((supMean, proMean))
+		allDcDataList.append((supMean, proMean))
 	
-	return textLines, allWholeDataList, allAcDataList, allTcDataList, allDcDataList
+	#for x in range(len(allWholeDataList)):
+		#print(textList[x], end = ' ')
+		#print(allWholeDataList[x], end = ' ')
+		#print(allAcDataList[x], end = ' ')
+		#print(allTcDataList[x], end = ' ')
+		#print(allDcDataList[x])
+	
+	
+	return textList, allWholeDataList, allAcDataList, allTcDataList, allDcDataList, idList
 	
 	
 	
-def outputAverageListsToOnePrintReadyList(textLines, allWholeDataList, allAcDataList, allTcDataList, allDcDataList):
+def outputAverageListsToOnePrintReadyList(textLines, allWholeDataList, allAcDataList, allTcDataList, allDcDataList, idList):
 	outLines = []
+	outLines.append(','.join(idList))
 	
-	for x in range(len(allWholeDataList):
+	
+	for x in range(len(allWholeDataList)):
 		line = '{},{},{}'.format(textLines[x+1], allWholeDataList[x][0], allWholeDataList[x][1])
 		outLines.append(line)
-	
-	for x in range(len(allAcDataList):
+		
+	for x in range(len(allAcDataList)):
 		line = '{},{},{}'.format(textLines[x+1], allAcDataList[x][0], allAcDataList[x][1])
 		outLines.append(line)
 	
-	for x in range(len(allTcDataList):
+	for x in range(len(allTcDataList)):
 		line = '{},{},{}'.format(textLines[x+1], allTcDataList[x][0], allTcDataList[x][1])
 		outLines.append(line)
 	
-	for x in range(len(allDcDataList):
+	for x in range(len(allDcDataList)):
 		line = '{},{},{}'.format(textLines[x+1], allDcDataList[x][0], allDcDataList[x][1])
 		outLines.append(line)
 	
@@ -440,14 +453,42 @@ def outputAverageListsToOnePrintReadyList(textLines, allWholeDataList, allAcData
 	
 	
 def doFinalAverageComparison(patientPathList, outputPath):
-	textLines, allWholeDataList, allAcDataList, allTcDataList, allDcDataList = makeAverageLists(patientPathList)
+	textLines, allWholeDataList, allAcDataList, allTcDataList, allDcDataList, idList = makeAverageLists(patientPathList)
 	
-	toPrintList = outputAverageListsToOnePrintReadyList(textLines, allWholeDataList, allAcDataList, allTcDataList, allDcDataList)
+	toPrintList = outputAverageListsToOnePrintReadyList(textLines, allWholeDataList, allAcDataList, allTcDataList, allDcDataList, idList)
+	
+	addSpaceList = [4, 28, 33, 56, 62, 84]
 	
 	fOut = open(outputPath, 'w')
-	for x in toPrintList:
-		fOut.write(x+'\n')
+	for x, i in enumerate(toPrintList):
+		if i.strip().split(',')[0] == 'Mean Curvature' and x>0 or i.strip().split(',')[0] == 'Number of Curves':
+			fOut.write('\n')
+		fOut.write(i+'\n')
 	fOut.close()
+	
+
+patPathList = [r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013",
+r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0014"]
+outPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\SampleOfpatients.txt"
+doFinalAverageComparison(patPathList, outPath)
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

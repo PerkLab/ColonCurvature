@@ -49,9 +49,11 @@ def doAllAfterCenterPointsCMD(patPath):
 	
 	
 	
-patPath = r"C:\Users\jaker\Documents\ColonCurves_JL\CtVolumes\TEST0013"
+patPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013"
+patPath2 = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0014"
 
-doAllAfterCenterPointsCMD(patPath)
+
+doAllAfterCenterPointsCMD(patPath2)
 
 #splitPatientDataFilesToFiles(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013\TEST0013_SupCurvaturesData.txt", r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013\TEST0013_SupCutPoints.txt")
 
