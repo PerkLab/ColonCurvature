@@ -48,29 +48,88 @@ def addFiducialsOnCurvatureMinimums(inPath):
 
 
 
-def generateCurve():
+def generateQuadraticCurve():
 	'''A function to generate a known curve for analysis. '''
 	coords = []
 	
-	for x in range(300):
-		coords.append((100,x*2,math.sin(x)*8))
+	for x in range(-100, 100):
+		coords.append((100, x, (x/5)**2))
+	
+	markups = slicer.vtkMRMLMarkupsFiducialNode()
+	slicer.mrmlScene.AddNode(markups)
+	for i in coords:
+		markups.AddFiducial(i[0], i[1], i[2])
+		
+def generate2DQuadraticCurve():
+	'''A function to generate a known curve for analysis. '''
+	coords = []
+	
+	for x in range(-100, 100):
+		coords.append((((x+50)/5)**2, ((x-50)/5)**2, (x/5)**2))
+	
+	markups = slicer.vtkMRMLMarkupsFiducialNode()
+	slicer.mrmlScene.AddNode(markups)
+	for i in coords:
+		markups.AddFiducial(i[0], i[1], i[2])
+		
+def generateCubicCurve():
+	'''A function to generate a known curve for analysis. '''
+	coords = []
+	
+	for x in range(-200, 200):
+		coords.append((100, x, (x/20)**3))
 	
 	markups = slicer.vtkMRMLMarkupsFiducialNode()
 	slicer.mrmlScene.AddNode(markups)
 	for i in coords:
 		markups.AddFiducial(i[0], i[1], i[2])
 
-#generateCurve()
+def generateSinCurve():
+	'''A function to generate a known curve for analysis. '''
+	coords = []
+	
+	for x in range(-50, 50):
+		res = 2
+		x2 = x/res
+		
+		exp = 20
+		coords.append((100, x2*exp, exp*math.sin(x2)))
+	
+	markups = slicer.vtkMRMLMarkupsFiducialNode()
+	slicer.mrmlScene.AddNode(markups)
+	for i in coords:
+		markups.AddFiducial(i[0], i[1], i[2])
+		
+def genCurve():
+	'''A function to generate a known curve for analysis. '''
+	coords = []
+	
+	for x in range(-40, 40):
+		res = 2
+		x2 = x/res
+		
+		exp = 10
+		coords.append((x2**2, x2*exp, exp*math.sin(x2)))
+	
+	markups = slicer.vtkMRMLMarkupsFiducialNode()
+	slicer.mrmlScene.AddNode(markups)
+	for i in coords:
+		markups.AddFiducial(i[0], i[1], i[2])
 
-pathLD = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_LeftDownCurvaturesData.txt"
+		
+		
+
+genCurve()
+
+#pathLD = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_LeftDownCurvaturesData.txt"
 
 
 #addFiducialsOnCurvatureMaximums(pathLD)
 #addFiducialsOnCurvatureMinimums(pathLD)
 
 
-addFiducialsOnCurvatureMaximums(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBB0002\PTBB0002_SupCurvaturesData.txt")
-addFiducialsOnCurvatureMinimums(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBB0002\PTBB0002_SupCurvaturesData.txt")
+#addFiducialsOnCurvatureMaximums(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBB0002\PTBB0002_SupCurvaturesData.txt")
+#addFiducialsOnCurvatureMinimums(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBB0002\PTBB0002_SupCurvaturesData.txt")
 
 
 
