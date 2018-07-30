@@ -466,15 +466,250 @@ def doFinalAverageComparison(patientPathList, outputPath):
 		fOut.write(i+'\n')
 	fOut.close()
 	
+def removeBlanksFromList(myList):
+	newList = []
+	for x,i in enumerate(myList):
+		if i!='' and i!=' ' and i != '\n' and i != ' \n' and i != '\n':
+			newList.append(i)
+	return newList
+
+		
+class DetailedPatient():
+
+	def __init__(self, patientPath):
+		self.path = patientPath
+		self.patId = self.path[-8:]
+		
+		self.supAllPath = os.path.join(self.path, self.patId + '_SupCurvaturesDataResults.txt')
+		fIn = open(self.supAllPath)
+		self.supAllLines = fIn.readlines()
+		fIn.close()
+		self.supAllLines = removeBlanksFromList(self.supAllLines[43:])
+		
+		self.supAcPath = os.path.join(self.path, self.patId + '_SupCurvaturesAcDataResults.txt')
+		fIn = open(self.supAcPath)
+		self.supAcLines = fIn.readlines()
+		fIn.close()
+		self.supAcLines = removeBlanksFromList(self.supAcLines[43:])
+		
+		self.supTcPath = os.path.join(self.path, self.patId + '_SupCurvaturesTcDataResults.txt')
+		fIn = open(self.supTcPath)
+		self.supTcLines = fIn.readlines()
+		fIn.close()
+		self.supTcLines = removeBlanksFromList(self.supTcLines[43:])
+		
+		self.supDcPath = os.path.join(self.path, self.patId + '_SupCurvaturesDcDataResults.txt')
+		fIn = open(self.supDcPath)
+		self.supDcLines = fIn.readlines()
+		fIn.close()
+		self.supDcLines = removeBlanksFromList(self.supDcLines[43:])
+		
+		
+		
+		self.proAllPath = os.path.join(self.path, self.patId + '_ProCurvaturesDataResults.txt')
+		fIn = open(self.proAllPath)
+		self.proAllLines = fIn.readlines()
+		fIn.close()
+		self.proAllLines = removeBlanksFromList(self.proAllLines[43:])
+		
+		self.proAcPath = os.path.join(self.path, self.patId + '_ProCurvaturesAcDataResults.txt')
+		fIn = open(self.proAcPath)
+		self.proAcLines = fIn.readlines()
+		fIn.close()
+		self.proAcLines = removeBlanksFromList(self.proAcLines[43:])
+		
+		self.proTcPath = os.path.join(self.path, self.patId + '_ProCurvaturesTcDataResults.txt')
+		fIn = open(self.proTcPath)
+		self.proTcLines = fIn.readlines()
+		fIn.close()
+		self.proTcLines = removeBlanksFromList(self.proTcLines[43:])
+		
+		self.proDcPath = os.path.join(self.path, self.patId + '_ProCurvaturesDcDataResults.txt')
+		fIn = open(self.proDcPath)
+		self.proDcLines = fIn.readlines()
+		fIn.close()
+		self.proDcLines = removeBlanksFromList(self.proDcLines[43:])
+		
+		#print(float(self.proAllLines[0].strip().split(', ')[2]))
+		self.proAllRatios, self.proAllDegs, self.proAllDistances = [float(line.strip().split(', ')[0]) for line in self.proAllLines], [float(line.strip().split(', ')[2]) for line in self.proAllLines], [float(line.strip().split(', ')[3]) for line in self.proAllLines]
+		self.proAcRatios, self.proAcDegs, self.proAcDistances = [float(line.strip().split(', ')[0]) for line in self.proAcLines], [float(line.strip().split(', ')[2]) for line in self.proAcLines], [float(line.strip().split(', ')[3]) for line in self.proAcLines]
+		self.proTcRatios, self.proTcDegs, self.proTcDistances = [float(line.strip().split(', ')[0]) for line in self.proTcLines], [float(line.strip().split(', ')[2]) for line in self.proTcLines], [float(line.strip().split(', ')[3]) for line in self.proTcLines]
+		self.proDcRatios, self.proDcDegs, self.proDcDistances = [float(line.strip().split(', ')[0]) for line in self.proDcLines], [float(line.strip().split(', ')[2]) for line in self.proDcLines], [float(line.strip().split(', ')[3]) for line in self.proDcLines]
+		
+		self.supAllRatios, self.supAllDegs, self.supAllDistances = [float(line.strip().split(', ')[0]) for line in self.supAllLines], [float(line.strip().split(', ')[2]) for line in self.supAllLines], [float(line.strip().split(', ')[3]) for line in self.supAllLines]
+		self.supAcRatios, self.supAcDegs, self.supAcDistances = [float(line.strip().split(', ')[0]) for line in self.supAcLines], [float(line.strip().split(', ')[2]) for line in self.supAcLines], [float(line.strip().split(', ')[3]) for line in self.supAcLines]
+		self.supTcRatios, self.supTcDegs, self.supTcDistances = [float(line.strip().split(', ')[0]) for line in self.supTcLines], [float(line.strip().split(', ')[2]) for line in self.supTcLines], [float(line.strip().split(', ')[3]) for line in self.supTcLines]
+		self.supDcRatios, self.supDcDegs, self.supDcDistances = [float(line.strip().split(', ')[0]) for line in self.supDcLines], [float(line.strip().split(', ')[2]) for line in self.supDcLines], [float(line.strip().split(', ')[3]) for line in self.supDcLines]
+		
+		self.curveCountSupAll = len(self.supAllLines)
+		self.curveCountSupAc = len(self.supAcLines)
+		self.curveCountSupTc = len(self.supTcLines)
+		self.curveCountSupDc = len(self.supDcLines)
+		
+		self.curveCountProAll = len(self.proAllLines)
+		self.curveCountProAc = len(self.proAcLines)
+		self.curveCountProTc = len(self.proTcLines)
+		self.curveCountProDc = len(self.proDcLines)
+		
+		
+		self.bigSupAllCount = [1 if x > 60 else 0 for x in self.supAllDegs]
+		self.bigSupAllCount = str(sum(self.bigSupAllCount))
+		self.bigSupAcCount = [1 if x > 60 else 0 for x in self.supAcDegs]
+		self.bigSupAcCount = str(sum(self.bigSupAcCount))
+		self.bigSupTcCount = [1 if x > 60 else 0 for x in self.supTcDegs]
+		self.bigSupTcCount = str(sum(self.bigSupTcCount))
+		self.bigSupDcCount = [1 if x > 60 else 0 for x in self.supDcDegs]
+		self.bigSupDcCount = str(sum(self.bigSupDcCount))
+		
+		self.bigProAllCount = [1 if x > 60 else 0 for x in self.proAllDegs]
+		self.bigProAllCount = str(sum(self.bigProAllCount))
+		self.bigProAcCount = [1 if x > 60 else 0 for x in self.proAcDegs]
+		self.bigProAcCount = str(sum(self.bigProAcCount))
+		self.bigProTcCount = [1 if x > 60 else 0 for x in self.proTcDegs]
+		self.bigProTcCount = str(sum(self.bigProTcCount))
+		self.bigProDcCount = [1 if x > 60 else 0 for x in self.proDcDegs]
+		self.bigProDcCount = str(sum(self.bigProDcCount))
+		
+		
+		
+		
+		
+#d = DetailedPatient(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013")
+			
+def arrangeDataForTTable(patientPathList, outPath):
+	'''A fucntion to use the detailedPatient class to generate a text file with data for all 8 sets of curves 
+	to be analyzed in a t taple and the p value to be determined. '''
+	detailedPatientList = [DetailedPatient(x) for x in patientPathList]
+	allSupAllRatios = []
+	allSupAcRatios = []
+	allSupTcRatios = []
+	allSupDcRatios = []
+	
+	allProAllRatios = []
+	allProAcRatios = []
+	allProTcRatios = []
+	allProDcRatios = []
+	
+	
+	for x in detailedPatientList:
+		allSupAllRatios += [str(y) for y in x.supAllRatios]
+		allSupAcRatios += [str(y) for y in x.supAcRatios]
+		allSupTcRatios += [str(y) for y in x.supTcRatios]
+		allSupDcRatios += [str(y) for y in x.supDcRatios]
+		allProAllRatios += [str(y) for y in x.proAllRatios]
+		allProAcRatios += [str(y) for y in x.proAcRatios]
+		allProTcRatios += [str(y) for y in x.proTcRatios]
+		allProDcRatios += [str(y) for y in x.proDcRatios]
+	
+	lines = [','.join(allSupAllRatios), ','.join(allSupAcRatios), ','.join(allSupTcRatios), ','.join(allSupDcRatios), ','.join(allProAllRatios), ','.join(allProAcRatios), ','.join(allProTcRatios), ','.join(allProDcRatios)]
+	
+	fOut = open(outPath, 'w')
+	for x in lines:
+		fOut.write(x + '\n')
+	fOut.close()
+
+	
+def arrangeDataForTTableLarger60(patientPathList, outPath):
+	'''A fucntion to use the detailedPatient class to generate a text file with data for all 8 sets of curves 
+	to be analyzed in a t taple and the p value to be determined. '''
+	detailedPatientList = [DetailedPatient(x) for x in patientPathList]
+	allSupAllRatios = []
+	allSupAcRatios = []
+	allSupTcRatios = []
+	allSupDcRatios = []
+	
+	allProAllRatios = []
+	allProAcRatios = []
+	allProTcRatios = []
+	allProDcRatios = []
+	
+	cutoff = 60
+	for x in detailedPatientList:
+		allSupAllRatios += [str(y) if y > cutoff else '' for y in x.supAllDegs]
+		allSupAcRatios += [str(y) if y > cutoff else '' for y in x.supAcDegs]
+		allSupTcRatios += [str(y) if y > cutoff else '' for y in x.supTcDegs]
+		allSupDcRatios += [str(y) if y > cutoff else '' for y in x.supDcDegs]
+		allProAllRatios += [str(y) if y > cutoff else '' for y in x.proAllDegs]
+		allProAcRatios += [str(y) if y > cutoff else '' for y in x.proAcDegs]
+		allProTcRatios += [str(y) if y > cutoff else '' for y in x.proTcDegs]
+		allProDcRatios += [str(y) if y > cutoff else '' for y in x.proDcDegs]
+	
+	allSupAllRatios = removeBlanksFromList(allSupAllRatios)
+	allSupAcRatios = removeBlanksFromList(allSupAcRatios)
+	allSupTcRatios = removeBlanksFromList(allSupTcRatios)
+	allSupDcRatios = removeBlanksFromList(allSupDcRatios)
+	allProAllRatios = removeBlanksFromList(allProAllRatios)
+	allProAcRatios = removeBlanksFromList(allProAcRatios)
+	allProTcRatios = removeBlanksFromList(allProTcRatios)
+	allProDcRatios = removeBlanksFromList(allProDcRatios)
+	print(allSupAcRatios)
+	
+	
+	lines = [','.join(allSupAllRatios), ','.join(allSupAcRatios), ','.join(allSupTcRatios), ','.join(allSupDcRatios), ','.join(allProAllRatios), ','.join(allProAcRatios), ','.join(allProTcRatios), ','.join(allProDcRatios)]
+	
+	fOut = open(outPath, 'w')
+	for x in lines:
+		fOut.write(x + '\n')
+	fOut.close()
+
+	
+	
+
+def arrangeBigStatsForTTable(patientPathList, outPath):
+	'''A fucntion to use the detailedPatient class to generate a text file with data for all 8 sets of curves 
+	to be analyzed in a t taple and the p value to be determined. '''
+	detailedPatientList = [DetailedPatient(x) for x in patientPathList]
+	
+	supAllCurveCounts = [str(x.curveCountSupAll) for x in detailedPatientList]
+	supAcCurveCounts = [str(x.curveCountSupAc) for x in detailedPatientList]
+	supTcCurveCounts = [str(x.curveCountSupTc) for x in detailedPatientList]
+	supDcCurveCounts = [str(x.curveCountSupDc) for x in detailedPatientList]
+	
+	proAllCurveCounts = [str(x.curveCountProAll) for x in detailedPatientList]
+	proAcCurveCounts = [str(x.curveCountProAc) for x in detailedPatientList]
+	proTcCurveCounts = [str(x.curveCountProTc) for x in detailedPatientList]
+	proDcCurveCounts = [str(x.curveCountProDc) for x in detailedPatientList]
+
+	lines = [','.join(supAllCurveCounts), ','.join(supAcCurveCounts), ','.join(supTcCurveCounts), ','.join(supDcCurveCounts), ','.join(proAllCurveCounts), ','.join(proAcCurveCounts), ','.join(proTcCurveCounts), ','.join(proDcCurveCounts)]
+	
+	fOut = open(outPath, 'w')
+	for x in lines:
+		fOut.write(x + '\n')
+	fOut.close()
+	
+	
+	
+def arrangeBigStatsForTTableLargerThan60(patientPathList, outPath):
+	'''A fucntion to use the detailedPatient class to generate a text file with data for all 8 sets of curves 
+	to be analyzed in a t taple and the p value to be determined. '''
+	detailedPatientList = [DetailedPatient(x) for x in patientPathList]
+	
+	supAllCurveCounts = [str(x.bigSupAllCount) for x in detailedPatientList]
+	supAcCurveCounts = [str(x.bigSupAcCount) for x in detailedPatientList]
+	supTcCurveCounts = [str(x.bigSupTcCount) for x in detailedPatientList]
+	supDcCurveCounts = [str(x.bigSupDcCount) for x in detailedPatientList]
+	
+	proAllCurveCounts = [str(x.bigProAllCount) for x in detailedPatientList]
+	proAcCurveCounts = [str(x.bigProAcCount) for x in detailedPatientList]
+	proTcCurveCounts = [str(x.bigProTcCount) for x in detailedPatientList]
+	proDcCurveCounts = [str(x.bigProDcCount) for x in detailedPatientList]
+
+	lines = [','.join(supAllCurveCounts), ','.join(supAcCurveCounts), ','.join(supTcCurveCounts), ','.join(supDcCurveCounts), ','.join(proAllCurveCounts), ','.join(proAcCurveCounts), ','.join(proTcCurveCounts), ','.join(proDcCurveCounts)]
+	
+	fOut = open(outPath, 'w')
+	for x in lines:
+		fOut.write(x + '\n')
+	fOut.close()
 
 #patPathList = [r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013",
 #r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0014"]
-#outPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\SampleOfpatients.txt"
+#outPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\DegreesForTTable.txt"
+
+#arrangeDataForTTable(patPathList, outPath)
+
 #doFinalAverageComparison(patPathList, outPath)
 	
 
-	
-	
 	
 	
 	
