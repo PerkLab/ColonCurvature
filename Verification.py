@@ -124,14 +124,9 @@ def genCurve():
         markups.AddFiducial(i[0], i[1], i[2])
 
 
-genCurve()
-
-# pathLD = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0012\TEST0012_LeftDownCurvaturesData.txt"
+#genCurve()
 
 
-# addFiducialsOnCurvatureMaximums(pathLD)
-# addFiducialsOnCurvatureMinimums(pathLD)
-
-
-# addFiducialsOnCurvatureMaximums(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBB0002\PTBB0002_SupCurvaturesData.txt")
-# addFiducialsOnCurvatureMinimums(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBB0002\PTBB0002_SupCurvaturesData.txt")
+dataPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBG0026\PTBG0026_ProCurvaturesData.txt"
+addFiducialsOnCurvatureMaximums(dataPath)
+addFiducialsOnCurvatureMinimums(dataPath)
