@@ -4,6 +4,7 @@ relevant forms. '''
 import statistics as stat
 from operator import itemgetter
 import os
+import math
 
 
 def getStats(dataInPath):
@@ -389,7 +390,9 @@ def makeAverageLists(patientPathList):
         if 'Number of curves <' in textList[x+1]:
             supDev = stat.stdev(supList)
             proDev = stat.stdev(proList)
-            allWholeDataList.append((supDev, proDev))
+            standardErrorSup = supDev/math.sqrt(len(supList))
+            standardErrorPro = proDev / math.sqrt(len(proList))
+            allWholeDataList.append((standardErrorSup, standardErrorPro))
 
     allAcDataList = []
 
@@ -402,7 +405,9 @@ def makeAverageLists(patientPathList):
         if 'Number of curves <' in textList[x+1]:
             supDev = stat.stdev(supList)
             proDev = stat.stdev(proList)
-            allAcDataList.append((supDev, proDev))
+            standardErrorSup = supDev / math.sqrt(len(supList))
+            standardErrorPro = proDev / math.sqrt(len(proList))
+            allAcDataList.append((standardErrorSup, standardErrorPro))
 
     allTcDataList = []
 
@@ -415,7 +420,9 @@ def makeAverageLists(patientPathList):
         if 'Number of curves <' in textList[x+1]:
             supDev = stat.stdev(supList)
             proDev = stat.stdev(proList)
-            allTcDataList.append((supDev, proDev))
+            standardErrorSup = supDev / math.sqrt(len(supList))
+            standardErrorPro = proDev / math.sqrt(len(proList))
+            allTcDataList.append((standardErrorSup, standardErrorPro))
 
     allDcDataList = []
 
@@ -428,11 +435,13 @@ def makeAverageLists(patientPathList):
         if 'Number of curves <' in textList[x+1]:
             supDev = stat.stdev(supList)
             proDev = stat.stdev(proList)
-            allDcDataList.append((supDev, proDev))
+            standardErrorSup = supDev / math.sqrt(len(supList))
+            standardErrorPro = proDev / math.sqrt(len(proList))
+            allDcDataList.append((standardErrorSup, standardErrorPro))
 
     for x,i in enumerate(textList):
         if 'Number of curves <' in i:
-            textList.insert(x+1, 'Stan Dev of Number of Curves ^')
+            textList.insert(x+1, 'Stan Err Mean of Number of Curves ^')
     # for x in range(len(allWholeDataList)):
     # print(textList[x], end = ' ')
     # print(allWholeDataList[x], end = ' ')
