@@ -367,7 +367,6 @@ class Patient():
                 pass
 
 
-# p = Patient(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013")
 
 
 def makeAverageLists(patientPathList):
@@ -387,6 +386,10 @@ def makeAverageLists(patientPathList):
         proMean = stat.mean(proList)
         # print((supMean, proMean))
         allWholeDataList.append((supMean, proMean))
+        if 'Number of curves <' in textList[x+1]:
+            supDev = stat.stdev(supList)
+            proDev = stat.stdev(proList)
+            allWholeDataList.append((supDev, proDev))
 
     allAcDataList = []
 
@@ -396,6 +399,10 @@ def makeAverageLists(patientPathList):
         supMean = stat.mean(supList)
         proMean = stat.mean(proList)
         allAcDataList.append((supMean, proMean))
+        if 'Number of curves <' in textList[x+1]:
+            supDev = stat.stdev(supList)
+            proDev = stat.stdev(proList)
+            allAcDataList.append((supDev, proDev))
 
     allTcDataList = []
 
@@ -405,6 +412,10 @@ def makeAverageLists(patientPathList):
         supMean = stat.mean(supList)
         proMean = stat.mean(proList)
         allTcDataList.append((supMean, proMean))
+        if 'Number of curves <' in textList[x+1]:
+            supDev = stat.stdev(supList)
+            proDev = stat.stdev(proList)
+            allTcDataList.append((supDev, proDev))
 
     allDcDataList = []
 
@@ -414,7 +425,14 @@ def makeAverageLists(patientPathList):
         supMean = stat.mean(supList)
         proMean = stat.mean(proList)
         allDcDataList.append((supMean, proMean))
+        if 'Number of curves <' in textList[x+1]:
+            supDev = stat.stdev(supList)
+            proDev = stat.stdev(proList)
+            allDcDataList.append((supDev, proDev))
 
+    for x,i in enumerate(textList):
+        if 'Number of curves <' in i:
+            textList.insert(x+1, 'Stan Dev of Number of Curves ^')
     # for x in range(len(allWholeDataList)):
     # print(textList[x], end = ' ')
     # print(allWholeDataList[x], end = ' ')
@@ -422,8 +440,21 @@ def makeAverageLists(patientPathList):
     # print(allTcDataList[x], end = ' ')
     # print(allDcDataList[x])
 
+
+    for x in range(len(allWholeDataList)):
+        print('{}, {}'.format(textList[x+1], allWholeDataList[x]))
+    #print(allWholeDataList)
+
     return textList, allWholeDataList, allAcDataList, allTcDataList, allDcDataList, idList
 
+
+
+
+#pathList = [r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBD0033",
+#r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBG0026"]
+#a,b,c,d,e,f = makeAverageLists(pathList)
+#print(len(b))
+#print(len(c))
 
 def outputAverageListsToOnePrintReadyList(textLines, allWholeDataList, allAcDataList, allTcDataList, allDcDataList,
                                           idList):
