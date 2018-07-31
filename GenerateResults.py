@@ -450,8 +450,8 @@ def makeAverageLists(patientPathList):
     # print(allDcDataList[x])
 
 
-    for x in range(len(allWholeDataList)):
-        print('{}, {}'.format(textList[x+1], allWholeDataList[x]))
+    #for x in range(len(allWholeDataList)):
+        #print('{}, {}'.format(textList[x+1], allWholeDataList[x]))
     #print(allWholeDataList)
 
     return textList, allWholeDataList, allAcDataList, allTcDataList, allDcDataList, idList
