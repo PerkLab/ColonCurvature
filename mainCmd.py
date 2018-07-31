@@ -60,20 +60,16 @@ pathList = [r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBD0033"
             r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBC0017"]
 
 
+x = 0
+for x in range(9):
+    doAllAfterCenterPointsCMD(pathList[x])
 
-outPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\MeanDegs.txt"
+outPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\newSampleOfPatients.txt"
+doFinalAverageComparison(pathList, outPath)
+
+#outPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\MeanDegs.txt"
 #arrangeSingleMeanDegreesForTTable(pathList, outPath)
-# x = 0
-# for x in range(9):
-# doAllAfterCenterPointsCMD(pathList[x])
+
 
 
 # splitPatientDataFilesToFiles(r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013\TEST0013_SupCurvaturesData.txt", r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\TEST0013\TEST0013_SupCutPoints.txt")
-
-#The main portion of this step:
-# x = 0
-# for x in range(len(pathList)):
-# doAllAfterCenterPointsCMD(pathList[x])
-
-# outPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\SampleOfpatients.txt"
-# doFinalAverageComparison(pathList, outPath)
