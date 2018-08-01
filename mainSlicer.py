@@ -33,8 +33,18 @@ pathList = [r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBD0033"
             r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBB0002",
             r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBC0017"]
 
+
+
+path = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTCI0052"
+
+centerPointsFromFile(path, 'sup')
+#centerPointsFromFile(path, 'pro')
+analyzeFromCenterPoints(path, modeList=['sup', 'pro'])
+saveCutPointsFile(path)
+
+'''
 x = 8
 analyzeFromCenterPoints(pathList[x], modeList=['sup', 'pro'])
 saveCutPointsFile(pathList[x])
-
+'''
 # TODO include centerpoint extraction in this file.
