@@ -62,10 +62,11 @@ pathList = [r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBD0033"
 
 
 #x = 0
-for x in range(len(pathList)):
-    doAllAfterCenterPointsCMD(pathList[x])
+#for x in range(len(pathList)):
+    #doAllAfterCenterPointsCMD(pathList[x])
+    #print('Done: {}'.format(pathList[x]))
 
-outPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\fourthSampleOfPatients.txt"
+outPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\fifthSampleOfPatients.txt"
 doFinalAverageComparison(pathList, outPath)
 
 #outPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\MeanDegs.txt"

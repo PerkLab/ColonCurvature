@@ -368,8 +368,6 @@ class Patient():
                 pass
 
 
-
-
 def makeAverageLists(patientPathList):
     '''A function to get the data from a patient's data path
     and get all average stats in both supine and prone positions. '''
@@ -387,10 +385,11 @@ def makeAverageLists(patientPathList):
         proMean = stat.mean(proList)
         # print((supMean, proMean))
         allWholeDataList.append((supMean, proMean))
-        if 'Number of curves <' in textList[x+1]:
+        if 'Number of curves <' in textList[x + 1] or 'Mean Degrees of Curve' in textList[
+            x + 1] or 'Number of Curves' == textList[x + 1] or 'Mean Distance of Curve' == textList[x + 1]:
             supDev = stat.stdev(supList)
             proDev = stat.stdev(proList)
-            standardErrorSup = supDev/math.sqrt(len(supList))
+            standardErrorSup = supDev / math.sqrt(len(supList))
             standardErrorPro = proDev / math.sqrt(len(proList))
             allWholeDataList.append((standardErrorSup, standardErrorPro))
 
@@ -402,7 +401,8 @@ def makeAverageLists(patientPathList):
         supMean = stat.mean(supList)
         proMean = stat.mean(proList)
         allAcDataList.append((supMean, proMean))
-        if 'Number of curves <' in textList[x+1]:
+        if 'Number of curves <' in textList[x + 1] or 'Mean Degrees of Curve' in textList[
+            x + 1] or 'Number of Curves' == textList[x + 1] or 'Mean Distance of Curve' == textList[x + 1]:
             supDev = stat.stdev(supList)
             proDev = stat.stdev(proList)
             standardErrorSup = supDev / math.sqrt(len(supList))
@@ -417,7 +417,8 @@ def makeAverageLists(patientPathList):
         supMean = stat.mean(supList)
         proMean = stat.mean(proList)
         allTcDataList.append((supMean, proMean))
-        if 'Number of curves <' in textList[x+1]:
+        if 'Number of curves <' in textList[x + 1] or 'Mean Degrees of Curve' in textList[
+            x + 1] or 'Number of Curves' == textList[x + 1] or 'Mean Distance of Curve' == textList[x + 1]:
             supDev = stat.stdev(supList)
             proDev = stat.stdev(proList)
             standardErrorSup = supDev / math.sqrt(len(supList))
@@ -432,38 +433,34 @@ def makeAverageLists(patientPathList):
         supMean = stat.mean(supList)
         proMean = stat.mean(proList)
         allDcDataList.append((supMean, proMean))
-        if 'Number of curves <' in textList[x+1]:
+        if 'Number of curves <' in textList[x + 1] or 'Mean Degrees of Curve' in textList[
+            x + 1] or 'Number of Curves' == textList[x + 1] or 'Mean Distance of Curve' == textList[x + 1]:
             supDev = stat.stdev(supList)
             proDev = stat.stdev(proList)
             standardErrorSup = supDev / math.sqrt(len(supList))
             standardErrorPro = proDev / math.sqrt(len(proList))
             allDcDataList.append((standardErrorSup, standardErrorPro))
 
-    for x,i in enumerate(textList):
+    for x, i in enumerate(textList):
         if 'Number of curves <' in i:
-            textList.insert(x+1, 'Stan Err Mean of Number of Curves ^')
-    # for x in range(len(allWholeDataList)):
-    # print(textList[x], end = ' ')
-    # print(allWholeDataList[x], end = ' ')
-    # print(allAcDataList[x], end = ' ')
-    # print(allTcDataList[x], end = ' ')
-    # print(allDcDataList[x])
+            textList.insert(x + 1, 'Stan Err Mean of Number of Curves ^')
+        if 'Mean Degrees of Curve' == i:
+            textList.insert(x + 1, 'SEM of Mean Degrees of Curve ^')
+        if 'Number of Curves' == i:
+            textList.insert(x + 1, 'SEM of Mean Number of Curves ^')
+        if 'Mean Distance of Curve' == i:
+            textList.insert(x+1, 'SEM of Mean Distance of Curve')
 
 
-    #for x in range(len(allWholeDataList)):
-        #print('{}, {}'.format(textList[x+1], allWholeDataList[x]))
-    #print(allWholeDataList)
 
     return textList, allWholeDataList, allAcDataList, allTcDataList, allDcDataList, idList
 
 
-
-
-#pathList = [r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBD0033",
-#r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBG0026"]
-#a,b,c,d,e,f = makeAverageLists(pathList)
-#print(len(b))
-#print(len(c))
+# pathList = [r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBD0033",
+# r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBG0026"]
+# a,b,c,d,e,f = makeAverageLists(pathList)
+# print(len(b))
+# print(len(c))
 
 def outputAverageListsToOnePrintReadyList(textLines, allWholeDataList, allAcDataList, allTcDataList, allDcDataList,
                                           idList):
