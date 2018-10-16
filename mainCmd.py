@@ -63,6 +63,8 @@ pathList = [r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBD0033"
 x = 0
 for x in range(9):
     doAllAfterCenterPointsCMD(pathList[x])
+	
+doAllAfterCenterPointsCMD(r"C:\Users\jaker\OneDrive - Queen's University\ColonCurves_JL\PTBG0026")
 
 outPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\newSampleOfPatients.txt"
 doFinalAverageComparison(pathList, outPath)

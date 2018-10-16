@@ -525,3 +525,9 @@ def analyzeFromCenterPoints(patientPath, modeList=['sup', 'pro']):
         except:
             print("Failed to get left down curvatures. " + patientPath)
             doLeftDown = False
+
+			
+patientPath = r"C:\Users\jaker\OneDrive - Queen's University\ColonCurves_JL\PTBG0026"
+analyzePatient(patientPath, modeList=['sup', 'pro'])
+
+

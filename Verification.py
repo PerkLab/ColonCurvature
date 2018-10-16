@@ -127,6 +127,6 @@ def genCurve():
 #genCurve()
 
 
-dataPath = r"C:\Users\jlaframboise\Documents\ColonCurves_JL\CtVolumes\PTBG0026\PTBG0026_ProCurvaturesData.txt"
+dataPath = r"C:\Users\jaker\OneDrive - Queen's University\ColonCurves_JL\CtVolumes\PTCI0052\PTCI0052_SupCurvaturesData.txt"
 addFiducialsOnCurvatureMaximums(dataPath)
 addFiducialsOnCurvatureMinimums(dataPath)
