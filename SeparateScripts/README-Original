@@ -1,0 +1,119 @@
+# ColonCurvature
+A set of tools to analyze the curvature of colon segmentations. 
+
+The overall process:
+
+1. Use the extract skeleton module in slicer (extension) to get a set of points along the
+centerline of the colon. 
+The code for automating just this step is contained in the file ExtractLineScript.py
+This code can be run through a slicer instance by typing execfile(pathToScript) into the
+slicer python interpreter. 
+
+2. Use the Markups to Model module in slicer (extension) to fit a curve to the point. 
+The code for automating this step is in the file CurveFromMarkups.ipynb
+The code is a jupyter file, and can be run through a slicer instance accordingly. 
+
+3. Use the computeCenterlines function from the Curve Maker module (extension) to
+calculate the curvature at every point along the curve produced from step 2. 
+The code for automating this process is CurvatureModelling.ipynb 
+The code is a jupyter file, and can be run through slicer accordingly. 
+
+
+However, once the above scripts were completed, a single script which integrated all of the above
+functionality was written. The file AllAnalysis.py contains all of the functions described above, 
+and has code to run through all of the steps analyzing a segmentation to a list of curvatures at points. 
+
+IMPORTANT! The scripts that automate and string together the different functions depend upon the 
+naming scheme and organization of your files. 
+
+A walkthrough of the process:
+
+To start, you have a project folder. 
+Inside are several patient data folders, each titled with an 8 digit patient ID such as PTAK0070.
+Inside the patient folder PTAK0070 is a couple files.
+Two files are the segmentaions of the patients colon in suppine, and prone positions. 
+There files are named as patID_ProSeg.seg.nrrd, for example PTAK0070_SupSeg.seg.nrrd.
+In each segmentation, there is a segment labeled 'colon' and one labeled 'notColon'. 
+Additionally, there must be an fcsv file, whihc contains two fiducial markups,
+where the first makup is the first cut point on the mid ascending colon, and the 
+second markup is the second cut point on the middescending colon just after the splenic flexure. 
+
+
+Once you are set up, open mainSlicer.py in a text editor like Notepad++, or an IDE.
+There are some execfile commands used to import functions from AllAnalysis and SplitSegments
+into Slicer. At the bottom of the file are the function calls that drive the process. 
+There is a list declared called pathList, and you should past the patient data folder paths
+into this list. 
+Once you are pointing it at the correct path, notice that the functions at the bottom are being
+called on the xth element of the list. 
+
+Since extract element is computationally challenging, and loading the volumes will use up a lot of
+Slicer's memory, I reccommend running four Slicer instances, and running patients on multiple 
+instances. In fact, after three patients in one instance, I would restart slicer or clear the scene. 
+
+So to do this, set x to the nth item in your pathList, and save the file. Then run the following 
+command in slicer: execfile(filePath), where filePath is the path to the mainSlicer.py script. 
+Once it is running, go back to editing the script in notepad, and increase x by one. Then save the
+script and run the execfile(filePath) command in the next slicer instance. 
+
+Do this for all values of x such that your list is not out of range(for all your paths).
+You should now have the folling additional files each of your patient data folders:
+-A patID_PosCenterPoints.fcsv file such as EXAM0012_ProCenterPoints.fcsv
+-A patID_PosCurve.vtk model file such as EXAM0012_ProCurve.vtk
+-A patID_PosCurvatures.txt file with the curvature at every point, in the form (curvature, x,y,z)
+-A patID_PosCutPoints.txt, such as EXAM0012_ProCutPoints.txt, to hold the cut points in a simple format
+
+At this point, all necesary functionality of 3D Slicer has been used, and the rest of the process
+will now be driven by the file mainCMD.py, and should be run through command prompt with Python 3. 
+
+Similar to the first portion, there is a variable named pathList. Once again, paste the patient data
+paths into this list with the r infront of the path to avoid escape characters. 
+ 
+See near the bottom of the file, there is a function call to doAllAfterCenterPointsCMD(pathList[x])
+This time, computational time is a non-issue, so the function will be called in a loop on every patient
+data path. Ensure the function call and loop is not commented out. Also see the line where is calls:
+doFinalAverageComparison and ensure it has pathList as a paramter, and change the outPath variable
+to the path of the file you would like to create/update with a final comparison of all of your patients. 
+Now you should run the file by executing: 'python filePathToScript' where filePathToScript is the path to mainCmd.py. 
+
+This should process within a minute or two, and once it finishes you should have the following new files in 
+each of your patient data folders:
+-PatId_PatientCurvatureComarison.txt which compares supine vs prone data
+-Several PatId_PosSectionData.txt where detailed data for every point is stored, such as EXAM0012_ProCurvaturesAcData.txt
+-Several PatId_PosSectionDataResults.txt files with summarized data 
+-Most informative files: the data results file and the patient comparison files.
+A the location of outPath you specified, you will find a text file created that is easy to import to Excel, 
+and is a good way to look at the results of all your patients in supine and prone positions, for the whole colon,
+ascending colon, transverse colon, and descending colon.  
+
+There are some extra functions in GenerateResults.py to create some other files for analysis if needed. 
+
+
+
+
+
+
+
+
+
+
+
+Once you are set up, edit AllAnalysis.py in a text editor like Notepad++.
+Inside you will find functions to:
+-Get centerpoints of a colon seg from file,
+-Fit a curve to markups 
+-Get an output file containing a curve fit to a fiducial file
+-Get a textfile with curvatures at every point for a curve file
+
+You will also find commented code blocks which automate the processes of curve fitting 
+and getting curvature at points for multipe patients. 
+
+The last function in the file, analyzePatient(patientPath, modeList = ['sup', 'pro'])
+is a function which takes the path to the patient file described above,
+and a list containing the types of scans you are working with. Use 'sup' for supine, 'pro' for prone,
+and 'ld' for left down. 
+
+Once you have filled in the patient directory and the types of segmentations you want to process into
+the analyzePatient function call at the bottom, save the file, and run the file in a slicer instance. 
+You can run the file in a slicer instance with: execfile("scriptPath")
+ 
