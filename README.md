@@ -13,6 +13,10 @@ Stage 0: Setup.
    B. Additionally, there must be an fcsv file, which contains two fiducial markups.
       The first makup is the first cut point on the mid ascending colon, and the 
       second markup is the second cut point on the middescending colon just after the splenic flexure. 
+3. Modules required:
+   - Curve Maker
+   - Markups to Model
+   - Extract Skeleton (default)
 
 Stage 1: Generating data for each scan. 
 1. Open 3D Slicer with a segmentation loaded corresponding to a patient's supine or prone CT scan, 
