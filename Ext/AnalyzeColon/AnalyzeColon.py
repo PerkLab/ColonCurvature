@@ -69,17 +69,17 @@ class AnalyzeColonWidget(ScriptedLoadableModuleWidget):
     #
     # input segmentation selector
     #
-    self.inputSelector = slicer.qMRMLNodeComboBox()
-    self.inputSelector.nodeTypes = ["vtkMRMLSegmentationNode"]
-    self.inputSelector.selectNodeUponCreation = True
-    self.inputSelector.addEnabled = False
-    self.inputSelector.removeEnabled = False
-    self.inputSelector.noneEnabled = False
-    self.inputSelector.showHidden = False
-    self.inputSelector.showChildNodeTypes = False
-    self.inputSelector.setMRMLScene( slicer.mrmlScene )
-    self.inputSelector.setToolTip( "Pick the input to the algorithm." )
-    parametersFormLayout.addRow("Input Segmentation: ", self.inputSelector)
+    self.inputSegmentationSelector = slicer.qMRMLNodeComboBox()
+    self.inputSegmentationSelector.nodeTypes = ["vtkMRMLSegmentationNode"]
+    self.inputSegmentationSelector.selectNodeUponCreation = True
+    self.inputSegmentationSelector.addEnabled = False
+    self.inputSegmentationSelector.removeEnabled = False
+    self.inputSegmentationSelector.noneEnabled = False
+    self.inputSegmentationSelector.showHidden = False
+    self.inputSegmentationSelector.showChildNodeTypes = False
+    self.inputSegmentationSelector.setMRMLScene(slicer.mrmlScene)
+    self.inputSegmentationSelector.setToolTip("Pick the input to the algorithm.")
+    parametersFormLayout.addRow("Input Segmentation: ", self.inputSegmentationSelector)
 
 
     #
@@ -97,27 +97,11 @@ class AnalyzeColonWidget(ScriptedLoadableModuleWidget):
     self.cutPointSelector.setToolTip("Pick the cut points for the algorithm.")
     parametersFormLayout.addRow("Input Cut Points: ", self.cutPointSelector)
 
-
-    #
-    # output volume selector # TODO remove this aspect of the GUI and autocreate a volume.
-    #
-    self.outputSelector = slicer.qMRMLNodeComboBox()
-    self.outputSelector.nodeTypes = ["vtkMRMLScalarVolumeNode"]
-    self.outputSelector.selectNodeUponCreation = True
-    self.outputSelector.addEnabled = True
-    self.outputSelector.removeEnabled = True
-    self.outputSelector.noneEnabled = True
-    self.outputSelector.showHidden = False
-    self.outputSelector.showChildNodeTypes = False
-    self.outputSelector.setMRMLScene( slicer.mrmlScene )
-    self.outputSelector.setToolTip( "Pick the output to the algorithm." )
-    parametersFormLayout.addRow("Output Volume: ", self.outputSelector)
-
     #
     # a text input field for the input of patient's path. get path with self.displayText
     #
-    self.textInputBox = qt.QLineEdit()
-    parametersFormLayout.addRow("Patient Path", self.textInputBox)
+    self.pathInputBox = qt.QLineEdit()
+    parametersFormLayout.addRow("Patient Path", self.pathInputBox)
 
     self.tagInputBox = qt.QLineEdit()
     parametersFormLayout.addRow("Scan type (Sup, Pro): ", self.tagInputBox)
@@ -133,9 +117,10 @@ class AnalyzeColonWidget(ScriptedLoadableModuleWidget):
 
     # connections
     self.applyButton.connect('clicked(bool)', self.onApplyButton)
-    self.inputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onSelect)
-    self.outputSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onSelect)
-    # self.textInputBox.connect("currentNodeChanged(vtkMRMLNode*)", self.onSelect) # TODO enable apply button w valid input
+    self.inputSegmentationSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onSelect)
+    self.cutPointSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.onSelect)
+    self.pathInputBox.textChanged.connect(self.onSelect)
+    self.tagInputBox.textChanged.connect(self.onSelect)
 
     # Add vertical spacer
     self.layout.addStretch(1)
@@ -147,11 +132,12 @@ class AnalyzeColonWidget(ScriptedLoadableModuleWidget):
     pass
 
   def onSelect(self):
-    self.applyButton.enabled = self.inputSelector.currentNode() and self.outputSelector.currentNode() and len(self.textInputBox.displayText)>0
+    logging.debug("onSelect called. ")
+    self.applyButton.enabled = self.inputSegmentationSelector.currentNode() and self.cutPointSelector.currentNode() and len(self.pathInputBox.displayText) > 0 and len(self.tagInputBox.displayText) == 3
 
   def onApplyButton(self):
     logic = AnalyzeColonLogic()
-    logic.run(self.inputSelector.currentNode(), self.cutPointSelector.currentNode(), self.outputSelector.currentNode(), self.textInputBox.displayText, self.tagInputBox.displayText)
+    logic.run(self.inputSegmentationSelector.currentNode(), self.cutPointSelector.currentNode(), self.pathInputBox.displayText, self.tagInputBox.displayText)
 
 #
 # AnalyzeColonLogic
@@ -383,20 +369,16 @@ class AnalyzeColonLogic(ScriptedLoadableModuleLogic):
     '''A function to take in a node which stores a segmentation, and output the
     segmentation as a binary labelmap node. '''
     segmentation = segNode.GetSegmentation()
-    colSeg = None
-    notColSeg = None
 
-    # check both segments in segmentation ('colon' and 'notColon')
-    for x in range(2):
+    # here the segments that are not the colon segment are removed to leave
+    # just the colon segment to be converted into a binary labelmap
+    for x in range(segmentation.GetNumberOfSegments()-1, -1, -1):
       segment = segmentation.GetNthSegment(x)
-      # 'colon' fits this requirement
-      if len(segment.GetName()) < 7:
-        colSeg = segment
-      # 'notColon' fits this requirement
-      elif len(segment.GetName()) > 6:
-        notColSeg = segment
+      if segment.GetName().lower() != 'colon':
+        segmentation.RemoveSegment(segment)
+    if (segmentation.GetNthSegment(0) is None) or segmentation.GetNthSegment(0).GetName() != 'colon':
+      logging.debug("Error, no colon segment found in segmentation node. ")
 
-    segmentation.RemoveSegment(notColSeg)
 
     # make the bin label map node
     colonBinLabelMapNode = slicer.vtkMRMLLabelMapVolumeNode()
@@ -408,7 +390,7 @@ class AnalyzeColonLogic(ScriptedLoadableModuleLogic):
     return colonBinLabelMapNode
 
 
-  def genCenterPoints(self, binLabelMapNode, tag='Sup'):
+  def genCenterPoints(self, binLabelMapNode):
     '''A function to use the Extract Skeleton module to generate a set
     of center points along the centerline of the colon. They will be saved
     to file. '''
@@ -419,14 +401,14 @@ class AnalyzeColonLogic(ScriptedLoadableModuleLogic):
 
     # create a markups fiducial node and name it, set it as the output
     fidsOut = slicer.vtkMRMLMarkupsFiducialNode()
-    fidsOut.SetName('TEST0007_{}CenterPoints'.format(tag))
+    fidsOut.SetName('{}_{}CenterPoints'.format(self.patId, self.mode))
     slicer.mrmlScene.AddNode(fidsOut)
     pars["OutputFiducialsFileName"] = fidsOut.GetID()
 
     pars['NumberOfPoints'] = 600
 
     imgOut = slicer.vtkMRMLLabelMapVolumeNode()
-    imgOut.SetName('TEST0007_OutputImg')
+    imgOut.SetName('{}_{}OutputImg'.format(self.patId, self.mode))
     slicer.mrmlScene.AddNode(imgOut)
     pars['OutputImageFileName'] = imgOut.GetID()
     logging.info('Created pars, running extract skeleton')
@@ -999,40 +981,25 @@ class AnalyzeColonLogic(ScriptedLoadableModuleLogic):
     fOut.close()
 
 
-
-
-
-
-
-
-
-
-
-
-  def hasImageData(self,volumeNode):
-    """This is an example logic method that
-    returns true if the passed in volume
-    node has valid image data
-    """
-    if not volumeNode:
-      logging.debug('hasImageData failed: no volume node')
-      return False
-    if volumeNode.GetImageData() is None:
-      logging.debug('hasImageData failed: no image data in volume node')
-      return False
-    return True
-
-  def isValidInputOutputData(self, inputVolumeNode, outputVolumeNode):
+  def isValidInputOutputData(self, inputSegNode, inputCutPointsNode, outputPathText, inputTagText):
     """Validates if the output is not the same as input
     """
-    if not inputVolumeNode:
-      logging.debug('isValidInputOutputData failed: no input volume node defined')
+    if not inputSegNode:
+      logging.debug('isValidInputOutputData failed: no input segmentation node defined.')
       return False
-    if not outputVolumeNode:
-      logging.debug('isValidInputOutputData failed: no output volume node defined')
+    if not inputSegNode.GetClassName() =='vtkMRMLSegmentationNode':
+      logging.debug('isValidInputOutputData failed: input segmentation node is the wrong type.')
+    if not inputCutPointsNode:
+      logging.debug('isValidInputOutputData failed: no input cut points markups node defined.')
       return False
-    if inputVolumeNode.GetID()==outputVolumeNode.GetID():
-      logging.debug('isValidInputOutputData failed: input and output volume is the same. Create a new volume for output to avoid this error.')
+    if not inputCutPointsNode.GetClassName() =='vtkMRMLMarkupsFiducialNode':
+      logging.debug('isValidInputOutputData failed: input cut points node is the wrong type.')
+      return False
+    if inputSegNode.GetID()==inputCutPointsNode.GetID():
+      logging.debug('isValidInputOutputData failed: your input nodes are the same.')
+      return False
+    if inputTagText != 'Pro' and inputTagText != 'Sup':
+      logging.debug('isValidInputOutputData failed: the patient tag is incorrect. Must be \'Sup\' or \'Pro\'')
       return False
     return True
 
@@ -1072,14 +1039,14 @@ class AnalyzeColonLogic(ScriptedLoadableModuleLogic):
     annotationLogic = slicer.modules.annotations.logic()
     annotationLogic.CreateSnapShot(name, description, type, 1, imageData)
 
-  def run(self, inputSegmentation, inputCutPoints, outputVolume, pathText, tagType):
+  def run(self, inputSegmentation, inputCutPoints, pathText, tagType):
     """
     Run the actual algorithm
     """
 
-    # if the input is not valid, do not run and tell the user # TODO fix the criteria for valid and invalid input
-    if not self.isValidInputOutputData(inputSegmentation, outputVolume):
-      slicer.util.errorDisplay('Input volume is the same as output volume. Choose a different output volume.')
+    # if the input is not valid, do not run and tell the user
+    if not self.isValidInputOutputData(inputSegmentation, inputCutPoints, pathText, tagType):
+      slicer.util.errorDisplay('The input and output data is not correct. Please fix and try again. ')
       return False
 
     logging.info('Processing started')
@@ -1098,7 +1065,7 @@ class AnalyzeColonLogic(ScriptedLoadableModuleLogic):
     self.curvaturesTcDataPath = os.path.join(self.patientFolder, self.patId + '_' + self.mode + 'CurvaturesTcData.txt')
     self.curvaturesDcDataPath = os.path.join(self.patientFolder, self.patId + '_' + self.mode + 'CurvaturesDcData.txt')
     self.centerPointsPath = os.path.join(self.patientFolder, self.patId + '_' + self.mode + 'CenterPoints.fcsv')
-    self.curveName = self.patId + '_' + 'Curve'
+    self.curveName = self.patId + '_' + self.mode + 'Curve'
     self.curvePath = os.path.join(self.patientFolder, self.patId + '_' + self.mode + 'Curve.vtk')
     self.maximumPointsPath = os.path.join(self.patientFolder, self.patId + '_' + self.mode + 'MaxPoints.fcsv')
     self.minimumPointsPath = os.path.join(self.patientFolder, self.patId + '_' + self.mode + 'MinPoints.fcsv')
@@ -1106,13 +1073,14 @@ class AnalyzeColonLogic(ScriptedLoadableModuleLogic):
     self.minimumPointsName = self.patId + '_' + self.mode + 'MinPoints'
 
 
+    #generate an output volume
 
 
     # convert the segmentation to a binary labelmap
     self.binLabelMapNode = self.convertSegmentationToBinaryLabelmap(inputSegmentation)
 
     # get the centerpoints through the binary label map via Extract Skeleton
-    self.centerPointsNode = self.genCenterPoints(self.binLabelMapNode, 'Sup')
+    self.centerPointsNode = self.genCenterPoints(self.binLabelMapNode)
     # save the centerpoints to file
     slicer.util.saveNode(self.centerPointsNode, self.centerPointsPath)
 
