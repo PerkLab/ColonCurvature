@@ -22,6 +22,8 @@ include(${Slicer_USE_FILE})
 add_subdirectory(AnalyzeColon)
 add_subdirectory(PatientComparison)
 add_subdirectory(CompareColonResults)
+add_subdirectory(ColonDatasetPrep)
+add_subdirectory(PrepareColonData)
 ## NEXT_MODULE
 
 #-----------------------------------------------------------------------------

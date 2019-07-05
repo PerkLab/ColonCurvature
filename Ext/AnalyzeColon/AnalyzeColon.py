@@ -20,7 +20,7 @@ class AnalyzeColon(ScriptedLoadableModule):
 
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    self.parent.title = "AnalyzeColon" # TODO make this more human readable by adding spaces
+    self.parent.title = "Analyze Colon"
     self.parent.categories = ["Colon Analysis"]
     self.parent.dependencies = []
     self.parent.contributors = ["Jacob Laframboise (Perk Lab)"] # replace with "Firstname Lastname (Organization)"
