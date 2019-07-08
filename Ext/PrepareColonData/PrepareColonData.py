@@ -88,7 +88,12 @@ class PrepareColonDataLogic(ScriptedLoadableModuleLogic):
     return True
 
   def convertSegmentation(self, segPath, volPath, binLabelOutPath):
-    success, segNode = slicer.util.loadSegmentation(r"C:\Users\jlaframboise\Desktop\TEST0012\TEST0012_ProSeg.seg.nrrd", returnNode=True)
+    """This function will take in the path to a segmentation file,
+    a nrrd volume file, and the desired output path for the binary labelmap.
+    It will load the segmentation into slicer, find the segmentation id for
+    the colon segment, and convert that segment into a binary labelmap.
+    It will save it to the output path parameter. """
+    success, segNode = slicer.util.loadSegmentation(segPath, returnNode=True)
     segmentation = segNode.GetSegmentation()
     segID = segmentation.GetSegmentIdBySegmentName('colon')
     segment = segmentation.GetSegment(segID)
@@ -96,11 +101,47 @@ class PrepareColonDataLogic(ScriptedLoadableModuleLogic):
     labelMapNode = slicer.vtkMRMLLabelMapVolumeNode()
     slicer.mrmlScene.AddNode(labelMapNode)
 
-    success, referenceNode = slicer.util.loadVolume(r"C:\Users\jlaframboise\Desktop\TEST0012\TEST0012_Prone.nrrd", returnNode=True)
+    success, referenceNode = slicer.util.loadVolume(volPath, returnNode=True)
     segToExport = vtk.vtkStringArray()
     segToExport.InsertNextValue(segID)
     slicer.modules.segmentations.logic().ExportSegmentsToLabelmapNode(segNode, segToExport, labelMapNode, referenceNode)
-    slicer.util.saveNode(labelMapNode, r"C:\Users\jlaframboise\Desktop\TEST0012\TEST0012_ProSegLabel.nrrd")
+    slicer.util.saveNode(labelMapNode, binLabelOutPath)
+    logging.info("Saved: " + binLabelOutPath)
+
+  def convertAllSegmentationsInPatientFolder(self, folder):
+    """This function will loop through a directory for files that start
+    with PT and end with .seg.nrrd and contain the tag 'Seg'. This should
+    isolate the segmentation files. Once it finds them it look for the
+    volume file based on the patient id and position, and makes an
+    output file based on the same conventions. This could be modified
+    for a recursive implementation to find files in more complicated
+    directories. """
+    count = 0
+    for item in os.listdir(folder):
+      #logging.info(item)
+      if item.endswith(".seg.nrrd") and item.startswith("PT") and "Seg" in item:
+        logging.info(item.split('Seg')[0])
+        segPath = os.path.join(folder, item)
+        volPath = os.path.join(folder, item.split('Seg')[0].replace('Pro', 'Prone.nrrd').replace('Sup', 'Supine.nrrd'))
+        binLabelOutPath = os.path.join(folder, item.split('Seg')[0]+"SegLabel.nrrd")
+        logging.info("Creating: " + binLabelOutPath)
+        self.convertSegmentation(segPath, volPath, binLabelOutPath)
+        count+=1
+        # clear scene to avoid memory problems with large datasets.
+        slicer.mrmlScene.Clear(0)
+    return count
+
+  def convertDatasetToBinLabelMaps(self, directory):
+    """This function will loop through a folder of patient folders and
+    call convertAllSegmentationsInPatientFolder on each folder. This
+    automates the conversion of segmentations to binary labelmaps for
+    the whole dataset. """
+    count = 0
+    for item in os.listdir(directory):
+      if os.path.isdir(os.path.join(directory, item)) and item.startswith("PT"):
+        logging.info(item)
+        count += self.convertAllSegmentationsInPatientFolder(os.path.join(directory, item))
+    return count
 
 
   def run(self, directoryPath):
@@ -115,7 +156,8 @@ class PrepareColonDataLogic(ScriptedLoadableModuleLogic):
     logging.info('Processing started')
 
     logging.info(directoryPath)
-    self.convertSegmentation('cat', 'dog', 'banana')
+    datasetSize = self.convertDatasetToBinLabelMaps(directoryPath)
+    logging.info("The dataset has {} labelmap volumes.".format(datasetSize))
 
     logging.info('Processing completed')
 
