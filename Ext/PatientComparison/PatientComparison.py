@@ -15,7 +15,7 @@ class PatientComparison(ScriptedLoadableModule):
 
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    self.parent.title = "PatientComparison" # TODO make this more human readable by adding spaces
+    self.parent.title = "Patient Comparison"
     self.parent.categories = ["Colon Analysis"]
     self.parent.dependencies = []
     self.parent.contributors = ["Jacob Laframboise (Perk Lab)"] # replace with "Firstname Lastname (Organization)"
@@ -26,10 +26,8 @@ and will make a comparison file of all the important stats between supine and pr
 """
     self.parent.helpText += self.getDefaultModuleDocumentationLink()
     self.parent.acknowledgementText = """
-This extension was developed by Jacob Laframboise, Perk Lab.
-This extension relies on the Extract Skeleton Module, the Markups to Model module,
-and the Curve Maker Module.
-""" # replace with organization, grant and thanks.
+This work was supported in part by Queen's High-school Internship in Computing.
+"""
 
 #
 # PatientComparisonWidget

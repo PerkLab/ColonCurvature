@@ -22,8 +22,8 @@ class AnalyzeColon(ScriptedLoadableModule):
     ScriptedLoadableModule.__init__(self, parent)
     self.parent.title = "Analyze Colon"
     self.parent.categories = ["Colon Analysis"]
-    self.parent.dependencies = []
-    self.parent.contributors = ["Jacob Laframboise (Perk Lab)"] # replace with "Firstname Lastname (Organization)"
+    self.parent.dependencies = ["MarkupsToModel", "CurveMaker", "ExtractSkeleton"]
+    self.parent.contributors = ["Jacob Laframboise (Perk Lab)"]
     self.parent.helpText = """
 This module is part of the work done to comparatively analyze the curvature of patients colons.
 This module will take in the nodes for a segmentation of a colon,
@@ -37,9 +37,8 @@ And analyze the data to generate statistics.
 """
     self.parent.helpText += self.getDefaultModuleDocumentationLink()
     self.parent.acknowledgementText = """
-This extension was developed by Jacob Laframboise, Perk Lab.
-This extension relies on the Extract Skeleton Module, the Markups to Model module,
-and the Curve Maker Module.
+This work was supported in part by Queen's Highschool Internship in Computing.
+Jacob Laframboise was supported by the Queen's Summer Work Experience Program. 
 """ # replace with organization, grant and thanks.
 
 #

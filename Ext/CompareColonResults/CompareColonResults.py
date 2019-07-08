@@ -73,10 +73,10 @@ class CompareColonResults(ScriptedLoadableModule):
 
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    self.parent.title = "CompareColonResults" # TODO make this more human readable by adding spaces
+    self.parent.title = "Compare Colon Results"
     self.parent.categories = ["Colon Analysis"]
     self.parent.dependencies = []
-    self.parent.contributors = ["Jacob Laframboise (Perk Lab)"] # replace with "Firstname Lastname (Organization)"
+    self.parent.contributors = ["Jacob Laframboise (Perk Lab)"]
     self.parent.helpText = """
 This module is part of the work done to comparatively analyze the curvature of patients colons.
 This module takes in a list of quotations bound paths separated by spaces,
@@ -85,9 +85,7 @@ It creates a summary file which draws comparisons from all of them.
 """
     self.parent.helpText += self.getDefaultModuleDocumentationLink()
     self.parent.acknowledgementText = """
-This extension was developed by Jacob Laframboise, Perk Lab.
-This extension relies on the Extract Skeleton Module, the Markups to Model module,
-and the Curve Maker Module.
+This work was supported in part by Queen's High-school Internship in Computing.
 """ # replace with organization, grant and thanks.
 
 #

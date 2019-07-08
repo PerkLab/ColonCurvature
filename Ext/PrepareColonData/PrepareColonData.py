@@ -15,19 +15,18 @@ class PrepareColonData(ScriptedLoadableModule):
 
   def __init__(self, parent):
     ScriptedLoadableModule.__init__(self, parent)
-    self.parent.title = "PrepareColonData" # TODO make this more human readable by adding spaces
-    self.parent.categories = ["Examples"]
-    self.parent.dependencies = []
-    self.parent.contributors = ["Jacob Laframboise (Perk Lab)"] # replace with "Firstname Lastname (Organization)"
+    self.parent.title = "Prepare Colon Data"
+    self.parent.categories = ["Colon Analysis"]
+    self.parent.dependencies = ["Segmentations"]
+    self.parent.contributors = ["Jacob Laframboise (Perk Lab)"]
     self.parent.helpText = """
-This is an example of scripted loadable module bundled in an extension.
-It performs a simple thresholding on the input volume and optionally captures a screenshot.
+This module will loop through a directory and convert all the segmentations to binary labelmaps
+for the colon dataset. 
 """
     self.parent.helpText += self.getDefaultModuleDocumentationLink()
     self.parent.acknowledgementText = """
-This file was originally developed by Jean-Christophe Fillion-Robin, Kitware Inc.
-and Steve Pieper, Isomics, Inc. and was partially funded by NIH grant 3P41RR013218-12S1.
-""" # replace with organization, grant and thanks.
+Jacob Laframboise was supported by the Queen's Summer Work Experience Program.
+"""
 
 #
 # PrepareColonDataWidget
