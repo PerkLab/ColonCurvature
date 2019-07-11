@@ -38,7 +38,7 @@
    <item row="3" column="1">
     <widget class="ctkCheckBox" name="labelmapCheckbox"/>
    </item>
-   <item row="4" column="0" colspan="2">
+   <item row="6" column="0" colspan="2">
     <widget class="QPushButton" name="applyButton">
      <property name="enabled">
       <bool>false</bool>
@@ -48,6 +48,20 @@
      </property>
      <property name="text">
       <string>Apply</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="volToNpArrayLabel">
+     <property name="text">
+      <string>Create numpy arrays from volumes</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QCheckBox" name="volToNpArrayCheckbox">
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </item>

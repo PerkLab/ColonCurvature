@@ -3,6 +3,8 @@ import unittest
 import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 import logging
+import numpy as np
+
 
 #
 # PrepareColonData
@@ -49,6 +51,7 @@ class PrepareColonDataWidget(ScriptedLoadableModuleWidget):
     self.ui.applyButton.connect('clicked(bool)', self.onApplyButton)
     self.ui.directoryButton.directoryChanged.connect(self.onSelect)
     self.ui.labelmapCheckbox.stateChanged.connect(self.onSelect)
+    self.ui.volToNpArrayCheckbox.stateChanged.connect(self.onSelect)
 
     # Add vertical spacer
     self.layout.addStretch(1)
@@ -60,11 +63,12 @@ class PrepareColonDataWidget(ScriptedLoadableModuleWidget):
     pass
 
   def onSelect(self):
-    self.ui.applyButton.enabled = self.ui.labelmapCheckbox.checked
+    self.ui.applyButton.enabled = self.ui.labelmapCheckbox.checked or self.ui.volToNpArrayCheckbox.checked
+
 
   def onApplyButton(self):
     logic = PrepareColonDataLogic()
-    logic.run(self.ui.directoryButton.directory)
+    logic.run(self.ui.directoryButton.directory, self.ui.labelmapCheckbox.checked, self.ui.volToNpArrayCheckbox.checked)
 
 #
 # PrepareColonDataLogic
@@ -141,9 +145,59 @@ class PrepareColonDataLogic(ScriptedLoadableModuleLogic):
         logging.info(item)
         count += self.convertAllSegmentationsInPatientFolder(os.path.join(directory, item))
     return count
+  
+  def convertVolumesToNpArrays(self, directory): # TODO add docstring, and remove some of the logging.info lines to clean output
+    if directory.endswith('\\'): # do you need this? use os.path.join for your paths
+      directory = directory[:-1]
+
+    newDir = os.path.join(directory, 'npyOutput')
+    if not os.path.exists(newDir):
+      os.makedirs(newDir)
+    logging.info('saving files to:' + newDir)
+
+    # WORKING!!!
+    pts = []
+    nrrds = []
+    segs = []
+
+    for root, dirs, files in os.walk(directory):
+      for dirname in dirs:
+        # for this module, it is recommended that the data is organized into folders according to patient
+        # for example:PTXX0000
+        if dirname.startswith("PT"):
+          pts.append(dirname)
+      for filename in files:
+        if filename.endswith(".nrrd"):
+          if filename.endswith(".seg.nrrd"):
+            segs.append(os.path.join(root, filename))
+          else:
+            pathToNrrd = os.path.join(root, filename)
+            nrrds.append(pathToNrrd)
+            # removes extension so getNode can read it
+            nodeName = filename[:-5]
+            # when using np.save, the text following the final backslash is the file name, hence the addition to the original newDir string
+            newNewDir = os.path.join(newDir, nodeName)
+
+            slicer.util.loadVolume(pathToNrrd)
+            newlyLoaded = slicer.util.getNode(nodeName)
+            arr = slicer.util.arrayFromVolume(newlyLoaded)
+            np.save(newNewDir, arr)
+            logging.info('saved ' + filename)
+            slicer.mrmlScene.Clear(0)
+
+    logging.info('process completed')
+
+    logging.info('list of patients:')
+    logging.info(pts)
+    logging.info('(' + str(len(pts)) + ' patients\' folders searched)')
+
+    logging.info('list of saved volumes:')
+    logging.info(nrrds)
+    logging.info('(' + str(len(nrrds)) + ' nrrd volumes found and converted)')
+    return len(nrrds)
 
 
-  def run(self, directoryPath):
+  def run(self, directoryPath, doSegToLabelMap, doVolToArray):
     """
     Run the actual algorithm
     """
@@ -153,11 +207,13 @@ class PrepareColonDataLogic(ScriptedLoadableModuleLogic):
       return False
 
     logging.info('Processing started')
-
     logging.info(directoryPath)
-    datasetSize = self.convertDatasetToBinLabelMaps(directoryPath)
-    logging.info("The dataset has {} labelmap volumes.".format(datasetSize))
-
+    if doSegToLabelMap:
+      datasetSize = self.convertDatasetToBinLabelMaps(directoryPath)
+      logging.info("The dataset has {} labelmap volumes.".format(datasetSize))
+    if doVolToArray:
+      datasetSize = self.convertVolumesToNpArrays(directoryPath)
+      logging.info("Converted {} volumes to np arrays. ".format(datasetSize))
     logging.info('Processing completed')
 
     return True
