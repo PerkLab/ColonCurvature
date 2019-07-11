@@ -135,6 +135,7 @@ class NRRDtoNPYLogic(ScriptedLoadableModuleLogic):
                 arr = slicer.util.arrayFromVolume(newlyLoaded)
                 np.save(newNewDir,arr)
                 print('saved ' + filename)
+                slicer.mrmlScene.Clear(0)
 
       print('process completed')
 
