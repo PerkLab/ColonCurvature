@@ -27,7 +27,7 @@ class Patient():
             try:
                 self.wholeData.append((float(x.split(',')[1]), float(x.split(',')[2])))
             except:
-                7 * 2
+                pass
 
         self.textLines = []
         for x in self.lines[0:32]:
@@ -40,7 +40,6 @@ class Patient():
             try:
                 self.acData.append((float(x.split(',')[1]), float(x.split(',')[2])))
             except:
-                7 * 2
                 pass
 
         self.tcData = []
@@ -48,7 +47,6 @@ class Patient():
             try:
                 self.tcData.append((float(x.split(',')[1]), float(x.split(',')[2])))
             except:
-                7 * 2
                 pass
 
         self.dcData = []
@@ -56,9 +54,38 @@ class Patient():
             try:
                 self.dcData.append((float(x.split(',')[1]), float(x.split(',')[2])))
             except:
-                7 * 2
                 pass
 
+    def statsFromData(self):
+        patientData = []
+        patientData.append(self.wholeData)
+        patientData.append(self.acData)
+        patientData.append(self.tcData)
+        patientData.append(self.dcData)
+        patientData = np.asarray(patientData)
+        print(patientData.shape)
+        patientDataLine = np.reshape(patientData, 4*29*2)
+        print(patientDataLine.shape)
+        patientDataLineString = self.patId + ',' + np.array2string(patientDataLine, separator=',').replace('\n', '')[1:-1]
+        print(patientDataLineString)
+        return patientDataLineString
+    
+    def getLabels(self):
+        labels = self.textLines[1:]
+        print(len(labels))
+        print(labels)
+        wholeLabels = [('Whole Pro ' + x, 'Whole Sup '+x) for x in labels]
+        acLabels = [('AC Pro ' + x, 'AC Sup ' + x) for x in labels]
+        tcLabels = [('TC Pro ' + x, 'TC Sup ' + x) for x in labels]
+        dcLabels = [('DC Pro ' + x, 'DC Sup ' + x) for x in labels]
+        allLabels = wholeLabels + acLabels + tcLabels + dcLabels
+        allLabels = np.asarray(allLabels)
+        print('All labels is this shape:')
+        print(allLabels.shape)
+        labelLine = np.reshape(allLabels, 4*29*2)
+        labelLineString = 'Patient ID' + ',' + ','.join(labelLine)
+        print(labelLineString)
+        return labelLineString
 
 
 
@@ -126,9 +153,13 @@ class CompareColonResultsWidget(ScriptedLoadableModuleWidget):
     self.applyButton.toolTip = "Run the algorithm."
     self.applyButton.enabled = True
     parametersFormLayout.addRow(self.applyButton)
+    self.testApplyButton = qt.QPushButton("Test Apply")
+    self.testApplyButton.enabled = False
+    #parametersFormLayout.addRow(self.testApplyButton)
 
     # connections
     self.applyButton.connect('clicked(bool)', self.onApplyButton)
+    self.testApplyButton.connect('clicked(bool)', self.onTestApplyButton)
 
     # Add vertical spacer
     self.layout.addStretch(1)
@@ -144,6 +175,12 @@ class CompareColonResultsWidget(ScriptedLoadableModuleWidget):
   def onApplyButton(self):
     logic = CompareColonResultsLogic()
     logic.run(self.pathListInputBox.displayText)
+  def onTestApplyButton(self):
+    p = Patient(r"C:\Users\jaker\Desktop\testingPatientClass\PTHD0081")
+    p.loadData()
+    p.statsFromData()
+    p.getLabels()
+    print('Ran onTestApplyButton')
 
 #
 # CompareColonResultsLogic
@@ -163,16 +200,16 @@ class CompareColonResultsLogic(ScriptedLoadableModuleLogic):
   def makeAverageLists(self, patientPathList):
     '''A function to get the data from a patient's data path
     and get all average stats in both supine and prone positions. '''
-    patientList = [Patient(x) for x in patientPathList]
-    idList = [patient.patId for patient in patientList]
+    self.patientList = [Patient(x) for x in patientPathList]
+    idList = [patient.patId for patient in self.patientList]
 
-    textList = patientList[0].textLines
+    textList = self.patientList[0].textLines[:]
 
     allWholeDataList = []
 
-    for x in range(len(patientList[0].wholeData)):
-      supList = [patient.wholeData[x][0] for patient in patientList]
-      proList = [patient.wholeData[x][1] for patient in patientList]
+    for x in range(len(self.patientList[0].wholeData)):
+      supList = [patient.wholeData[x][0] for patient in self.patientList]
+      proList = [patient.wholeData[x][1] for patient in self.patientList]
       supMean = np.mean(supList)
       proMean = np.mean(proList)
       # print((supMean, proMean))
@@ -186,9 +223,9 @@ class CompareColonResultsLogic(ScriptedLoadableModuleLogic):
 
     allAcDataList = []
 
-    for x in range(len(patientList[0].acData)):
-      supList = [patient.acData[x][0] for patient in patientList]
-      proList = [patient.acData[x][1] for patient in patientList]
+    for x in range(len(self.patientList[0].acData)):
+      supList = [patient.acData[x][0] for patient in self.patientList]
+      proList = [patient.acData[x][1] for patient in self.patientList]
       supMean = np.mean(supList)
       proMean = np.mean(proList)
       allAcDataList.append((supMean, proMean))
@@ -201,9 +238,9 @@ class CompareColonResultsLogic(ScriptedLoadableModuleLogic):
 
     allTcDataList = []
 
-    for x in range(len(patientList[0].tcData)):
-      supList = [patient.tcData[x][0] for patient in patientList]
-      proList = [patient.tcData[x][1] for patient in patientList]
+    for x in range(len(self.patientList[0].tcData)):
+      supList = [patient.tcData[x][0] for patient in self.patientList]
+      proList = [patient.tcData[x][1] for patient in self.patientList]
       supMean = np.mean(supList)
       proMean = np.mean(proList)
       allTcDataList.append((supMean, proMean))
@@ -216,9 +253,9 @@ class CompareColonResultsLogic(ScriptedLoadableModuleLogic):
 
     allDcDataList = []
 
-    for x in range(len(patientList[0].dcData)):
-      supList = [patient.dcData[x][0] for patient in patientList]
-      proList = [patient.dcData[x][1] for patient in patientList]
+    for x in range(len(self.patientList[0].dcData)):
+      supList = [patient.dcData[x][0] for patient in self.patientList]
+      proList = [patient.dcData[x][1] for patient in self.patientList]
       supMean = np.mean(supList)
       proMean = np.mean(proList)
       allDcDataList.append((supMean, proMean))
@@ -286,6 +323,31 @@ class CompareColonResultsLogic(ScriptedLoadableModuleLogic):
       fOut.write(i + '\n')
     fOut.close()
 
+  def makeByPatientFile(self):
+    print('makeByPatientFile function running')
+    print(self.patientList)
+    f = open(self.byPatientOutPath, 'w')
+    if len(self.patientList)==0:
+      print('No patients in list, no summary...')
+      return False
+    elif len(self.patientList)<2:
+      f.write(self.patientList[0].getLabels())
+      f.write(self.patientList[0].statsFromData())
+      f.write('\n')
+    elif len(self.patientList)>1:
+      f.write(self.patientList[0].getLabels())
+      f.write('\n')
+      f.write(self.patientList[0].statsFromData())
+      f.write('\n')
+      for patient in self.patientList[1:]:
+        f.write(patient.statsFromData())
+        f.write('\n')
+    else:
+        print('Patient list is broken. ')
+    f.close()
+    return True
+
+
 
 
   def run(self, pathList):
@@ -300,13 +362,13 @@ class CompareColonResultsLogic(ScriptedLoadableModuleLogic):
     #self.pathList = [x[1:-1] for x in self.pathList]
     self.directory = self.pathList[0][:-9]
     self.outPath = os.path.join(self.directory, 'Summary.txt')
-
     self.doFinalAverageComparison(self.pathList, self.outPath)
 
     logging.info(self.outPath)
 
-
-
+    self.byPatientOutPath = os.path.join(self.directory, 'AllDataByPatient.txt')
+    
+    self.makeByPatientFile()
 
     logging.info('Processing completed')
 
