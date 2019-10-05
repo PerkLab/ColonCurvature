@@ -798,8 +798,10 @@ class AnalyzeColonLogic(ScriptedLoadableModuleLogic):
     maxDegrees = [float(x.strip().split(', ')[8]) for x in lines[1:]]
     maxDistances = [float(x.strip().split(', ')[9]) for x in lines[1:]]
 
-    meanCuvature = np.mean(curvatureValues)
+    meanCuvature = sum(curvatureValues)/max(len(curvatureValues), 1)
     medianCurvature = np.median(curvatureValues)
+    if np.isnan(medianCurvature):
+      medianCurvature=0
     stanDevCurvature = np.std(curvatureValues)
     varianceCurvature = np.var(curvatureValues)
     totalCurvature = sum(curvatureValues)
@@ -908,10 +910,14 @@ class AnalyzeColonLogic(ScriptedLoadableModuleLogic):
     else:
       lessThan180DegAvgDist = 0
 
-    meanCurveDegrees = np.mean(allCurveDegrees)
-    meanCurveDistance = np.mean(allCurveDistances)
+    meanCurveDegrees = sum(allCurveDegrees)/max(1, len(allCurveDegrees))
+    meanCurveDistance = sum(allCurveDistances)/max(1, len(allCurveDistances))
     medianCurveDegrees = np.median(allCurveDegrees)
+    if np.isnan(medianCurveDegrees):
+      medianCurveDegrees=0
     medianCurveDistance = np.median(allCurveDistances)
+    if np.isnan(medianCurveDistance):
+      medianCurveDistance=0
 
     linesOut = []
     linesOut.append('Mean Curvature, {}'.format(meanCuvature))

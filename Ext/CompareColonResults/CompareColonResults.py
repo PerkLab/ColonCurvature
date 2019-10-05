@@ -296,8 +296,8 @@ class CompareColonResultsLogic(ScriptedLoadableModuleLogic):
 
     logging.info('Processing started')
 
-    self.pathList = pathList.split()
-    self.pathList = [x[1:-1] for x in self.pathList]
+    self.pathList = pathList[1:-1].split('\" \"')
+    #self.pathList = [x[1:-1] for x in self.pathList]
     self.directory = self.pathList[0][:-9]
     self.outPath = os.path.join(self.directory, 'Summary.txt')
 
