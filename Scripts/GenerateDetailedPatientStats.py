@@ -6,7 +6,6 @@
 
 import os
 
-patientPaths = [r"C:\Users\jaker\Desktop\testingPatientClass\PTHD0081", r"C:\Users\jaker\Desktop\testingPatientClass\PTHF0103"]
 
 class Patient():
     def __init__(self, path):
@@ -49,4 +48,4 @@ def createDetailedPatientStats(byPatientFilePath):
     for line in lines:
         f2.write(line+'\n')
     f2.close()
-createDetailedPatientStats(r"C:\Users\jaker\Desktop\testingPatientClass\AllDataByPatient.txt")
+createDetailedPatientStats(r"D:\OneDrive - Queen's University\Perk\ColonWork\FullDataset\AllDataByPatient-Oct6th2019.txt")
