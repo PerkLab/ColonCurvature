@@ -58,33 +58,36 @@ class Patient():
 
     def statsFromData(self):
         patientData = []
-        patientData.append(self.wholeData)
-        patientData.append(self.acData)
-        patientData.append(self.tcData)
-        patientData.append(self.dcData)
+        # the [5:] slice removes some less useful stats.
+        patientData.append(self.wholeData[5:])
+        patientData.append(self.acData[5:])
+        patientData.append(self.tcData[5:])
+        patientData.append(self.dcData[5:])
+        # print(patientData[0])
         patientData = np.asarray(patientData)
-        print(patientData.shape)
-        patientDataLine = np.reshape(patientData, 4*29*2)
-        print(patientDataLine.shape)
+        # print(patientData.shape)
+        patientDataLine = np.reshape(patientData, 4*24*2)
+        # print(patientDataLine.shape)
         patientDataLineString = self.patId + ',' + np.array2string(patientDataLine, separator=',').replace('\n', '')[1:-1]
-        print(patientDataLineString)
+        # print(patientDataLineString)
         return patientDataLineString
     
     def getLabels(self):
-        labels = self.textLines[1:]
-        print(len(labels))
-        print(labels)
+        labels = self.textLines[6:]
+        # print(labels)
+        # print(len(labels))
+        # print(labels)
         wholeLabels = [('Whole Pro ' + x, 'Whole Sup '+x) for x in labels]
         acLabels = [('AC Pro ' + x, 'AC Sup ' + x) for x in labels]
         tcLabels = [('TC Pro ' + x, 'TC Sup ' + x) for x in labels]
         dcLabels = [('DC Pro ' + x, 'DC Sup ' + x) for x in labels]
         allLabels = wholeLabels + acLabels + tcLabels + dcLabels
         allLabels = np.asarray(allLabels)
-        print('All labels is this shape:')
-        print(allLabels.shape)
-        labelLine = np.reshape(allLabels, 4*29*2)
+        # print('All labels is this shape:')
+        # print(allLabels.shape)
+        labelLine = np.reshape(allLabels, 4*24*2)
         labelLineString = 'Patient ID' + ',' + ','.join(labelLine)
-        print(labelLineString)
+        # print(labelLineString)
         return labelLineString
 
 
