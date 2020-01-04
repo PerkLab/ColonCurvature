@@ -43,6 +43,8 @@ A set of tools, and 3D Slicer extensions to analyze the curvature of colon segme
 
 #### IMPORTANT! This process depends upon the naming scheme and organization of your files. 
 
+![Process Overview](Imgs/4Square.png "Process Overview")
+
 
 ## Behind the scenes
 
